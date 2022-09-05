@@ -4,7 +4,9 @@
   box-sizing: border-box;
 }
 html{
-  height: 100vh;
+  height: 100%;
+  overscroll-behavior-x: none !important;
+  overscroll-behavior-y: none !important;
 }
 body {
   margin: 0;
@@ -29,3 +31,9 @@ body {
   height: 100%;
 }
 
+a{
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 function Contact() {
@@ -11,7 +12,13 @@ function Contact() {
         setValue(e.target.value);
     }
 
-    return (
+    return (<FormWrapper
+        initial={{ y: -600 }}
+        animate={{ y: 0 }}
+        exit={{ y: -600 }}
+        transition={{ ease: "easeOut", duration: 0.25 }}
+    >
+        {/* <h2></h2> */}
         <Form onSubmit={handleSubmit}>
             <label>
                 <input type="text" value={value} onChange={handleChange} />
@@ -29,17 +36,24 @@ function Contact() {
             </label>
             <input type="submit" value="Submit" />
         </Form>
-    )
+    </FormWrapper>)
 }
 
-export default Contact
+export default Contact;
 
+const FormWrapper = styled(motion.div)`
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+`
 const Form = styled.form`
     display: flex;
     flex-direction: column;
-    width: 70ch;
     margin: 0 auto;
+
     & input{
+        font-size: 16px;
         height: 40px;
     }
 `

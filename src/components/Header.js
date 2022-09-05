@@ -1,57 +1,66 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components'
 
-
-const text = `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobort
-`;
-let activeClassName = "active";
 function Header() {
-    return (
-        <HeaderWrapper>
-            <NavWrapper>
-                <Logo />
-                <div className='Links'>
-                    <NavLink to={"/contact"}
-                        className={({ isActive }) =>
-                            isActive ? activeClassName : undefined
-                        }>{`book now`}</NavLink>
-                    <a className='email' href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a>
-                </div>
-            </NavWrapper>
-            <Desc>{text}</Desc>
-        </HeaderWrapper>
-    )
+    const navWrap = useRef(null);
+
+    useEffect(() => {
+        if (navWrap.current) {
+            navWrap.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
+        }
+    });
+
+    return (<NavWrapper ref={navWrap}>
+        <Logo />
+        <div className='Links'>
+            <NavLink to={"/contact"}
+                className={`${({ isActive }) => isActive && "active"}`}
+            >{`book now`}</NavLink>
+            <a className='email' href='mailto:hello@afterdark.digital'>{`email us >`}</a>
+        </div>
+    </NavWrapper>)
 }
 
 export default Header
 
-const HeaderWrapper = styled.div`
-    padding: 0 15vw;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 40% 60%;
-    grid-template-rows: 100%;
-    flex-direction: row;
-    /* border: 1px solid; */
-    /* border-color: #ffffff transparent transparent transparent; */
-    column-gap: 20px;
-    background-color: #0f6aff;
-
-    & *{
-    transition: 0.3s !important;
-    }
-`
 const NavWrapper = styled.div`
-    padding-top: 10px;
     position: relative;
     display: flex;
-    flex-direction: column;
-    row-gap: 0px;
+    flex-direction: row;
+    column-gap: 20px;
     width: 100%;
-    height: 100%;
+    height: min-content;
     justify-content: flex-start;
     padding-bottom: 20px;
+    background-color: #0f6aff;
+    padding: 10px 20px !important;
+    /* transform: skewY(260px); */
+
+    & *{
+        transition: 0.3s !important;
+    }
+
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+
+         & .Links{
+            justify-content: space-between !important;
+            column-gap: 20px !important;
+
+            & *{
+                width: 100% !important;
+                font-size: 6vw !important;
+            }
+         }
+    }
+
+    @media screen and (min-width: 768px) {
+    justify-content: flex-end;
+         & .Links{
+            justify-content: flex-end !important;
+         }
+    }
 
     & .Links{
         width: 100%;
@@ -59,30 +68,29 @@ const NavWrapper = styled.div`
         column-gap: 10px;
         justify-content: flex-start;
         font-weight: 700;
-            font-style: italic;
-        /* position: absolute; */
-        /* bottom: 20px; */
+        font-style: italic;
+        align-items: center;
 
         & * {
-            font-size: 12px;
+            font-size: 36px;
             text-transform: uppercase;
-            padding:0px 4px;
+            padding: 0px 10px;
             width: fit-content;
-                background-color: #ffffff;
-                color: rgb(17, 17, 17);
-            border: 1px solid transparent; 
+            border: 1px solid #ffffff; 
+            background-color: transparent;
+            color: #ffffff;
 
             &:hover{
                 /* border-color: #ffffff; */
                 background-color: #000000;
-                color: #ffffff;
+                color: rgb(17, 17, 17);
             }
 
             &.active{
                 cursor: default;
                 border-color: #ffffff;
-                background-color: transparent;
-                color: #ffffff;
+                background-color: #ffffff;
+                color: #000000;
             }
         }
         & a.email{
@@ -127,18 +135,10 @@ const SvgLogo = styled(NavLink)`
     }
         
 `
-const Desc = styled.div`
-    pointer-events: none;
-    padding: 10px;
-    color: #ffffff;
-    text-indent: 20px;
-    font-size:13px ;
-`
 function Logo() {
     return (
-        <SvgLogo to={"/"} className={({ isActive }) =>
-            isActive ? activeClassName : undefined
-        }>
+        <SvgLogo to={"/"} className={`${({ isActive }) => isActive && "active"}`}
+        >
             <svg
                 width="1208.453"
                 height="185.665"
