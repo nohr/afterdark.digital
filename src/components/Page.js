@@ -1,22 +1,34 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import Contact from './Contact'
+import { useSnapshot } from 'valtio';
+import { state } from '../utils/state';
 import Projects from './Projects'
 
-function Page({ content }) {
-    const contentWrapper = useRef(null);
+function Content({ content }) {
+    const contentRef = useRef(null);
+    useEffect(() => {
+        if (contentRef.current) {
+            contentRef.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
+        }
+    });
 
-    // useEffect(() => {
-    //     if (contentWrapper.current) {
-    //         contentWrapper.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
-    //     }
-    // });
+    return (<ContentPage ref={contentRef}>
+        <h2>{content.project_name}</h2>
+        <img src={`${content.image}`} />
+        <div>{content.date}</div>
+        <div>{content.description}</div>
+    </ContentPage>);
+}
+function Page({ content }) {
+    const snap = useSnapshot(state);
+
     return (
-        <ContentWrapper ref={contentWrapper}>
-            {content === "contact" && <Contact />}
-            {<Projects />}
+        <ContentWrapper>
+            {content === "home" ? <Projects /> : null}
+            {content !== "home" && <Content content={content} />}
+            {snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer mobile'>hello@afterdark.digital</a>}
         </ContentWrapper>
-    )
+    );
 }
 
 export default Page;
@@ -30,8 +42,18 @@ const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin: 0 20px;
+    /* margin: 0 20px; */
 
     /* @media screen and (max-width: 768px) {
     } */
+`
+const ContentPage = styled.div`
+    overflow-x: scroll;
+    width: 100%;
+    height: 100%;
+    margin: auto 0;
+
+    img{
+        width: 100%;
+    }
 `

@@ -2,7 +2,14 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  --white: #ffffff;
+  --whitealpha: #ffffff67;
+  --black: #000000;
+  --offwhite: #f6f6f6;
+  --blue: #0f6aff;
+  --bluealpha: #0f6aff67;
 }
+
 html{
   height: 100%;
   overscroll-behavior-x: none !important;
@@ -15,8 +22,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(255, 255, 255);
-  color: #000000;
+  background-color: var(--offwhite);
+  color: var(--black);
   height: 100%;
 }
 
@@ -36,4 +43,16 @@ a{
   -moz-user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
+}
+
+a.footer {
+  flex-direction: column;
+  align-content: center;
+  text-decoration: none;
+  background-color: var(--blue);
+  color: var(--offwhite);
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+  vertical-align: middle;
 }
