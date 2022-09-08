@@ -13,9 +13,9 @@ function Content({ content }) {
     });
 
     return (<ContentPage ref={contentRef}>
-        <h2>{content.project_name}</h2>
-        <img src={`${content.image}`} />
+        <h1>{content.project_name}</h1>
         <div>{content.date}</div>
+        <img src={`${content.image}`} />
         <div>{content.description}</div>
     </ContentPage>);
 }

@@ -1,8 +1,9 @@
 import { NavIcon, SvgLogo } from "../components/Header";
+import { state } from "./state";
 
 export function Logo() {
     return (
-        <SvgLogo to={"/"} className={`${({ isActive }) => isActive && "active"} Logo`}>
+        <SvgLogo to={"/"} onClick={() => state.menu = false} className={`${({ isActive }) => isActive && "active"} Logo`}>
             <svg
                 className='ADD'
                 width="563.77"

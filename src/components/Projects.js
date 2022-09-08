@@ -1,22 +1,31 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 // import { arc, pie, select } from 'd3'
 import { state } from '../utils/state'
 import { useSnapshot } from 'valtio'
 import { Link } from 'react-router-dom'
+import Tilt from 'react-tilt'
+import { handleMousemove } from '../utils/scroll'
+
 
 function Project({ project }) {
-    return (<Card to={`/${project.id}`}>
-        <img src={`${project.image}`} />
-        <div className='title'>{project.project_name}</div>
-        <div>{project.date}</div>
-        <div>{project.description}</div>
-    </Card>)
+    return (<Tilt
+        options={{ reset: false, easing: "cubic-bezier(.03,.98,.52,.99)", }}
+        style={{ height: '100%' }}
+    >
+        <Card to={`/${project.id}`}>
+            <img src={`${project.image}`} />
+            <div className='title'>{project.project_name}</div>
+            <div>{project.date}</div>
+            <div>{project.description}</div>
+        </Card>
+    </Tilt>)
 }
 
 function Projects() {
     const snap = useSnapshot(state);
+    const CardsScroll = useRef(null);
     // let svg;
     // useEffect(() => {
     //     const { innerWidth, innerHeight } = window;
@@ -121,14 +130,19 @@ function Projects() {
     //     }
     // }, [])
 
+    useEffect(() => {
+        CardsScroll.current.addEventListener("mousemove", (e) => handleMousemove(e, CardsScroll), false);
+    }, [])
+
     return (<CardScroller
+        ref={CardsScroll}
         className='CardsScroll'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
-        <CardWrapper display={snap.menu ? 'none' : 'flex'}>
+        <CardWrapper>
             {snap.data.map((project, key) => (
                 <Project project={project} key={key} />
             ))}
@@ -147,13 +161,18 @@ const CardScroller = styled(motion.div)`
 const CardWrapper = styled.div`
     width: max-content;
     height: 100%;
-    display: ${props => props.display};
     transition: 0.3s;
+    display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     /* column-gap: 10px; */
-    padding: 10px 0;
+    padding: 100px 0;
+
+    @media screen and (max-width: 768px) {
+        padding: 40px 0;
+        align-items: center;
+    }
 `
 const Card = styled(Link)`
     position: relative;
@@ -161,11 +180,15 @@ const Card = styled(Link)`
     grid-template-columns: 1fr;
     grid-template-rows: 1.5fr 0.25fr 0.25fr 1fr ;
     width: 95vw;
-    height: 80%;
+    height: 100%;
     background-color: var(--blue);
     overflow: hidden;
     text-decoration: none;
     color: var(--offwhite);
+
+    @media screen and (min-width: 768px) {
+        width: 45vw;
+    }
 
     &:hover{
         opacity: 0.75;
