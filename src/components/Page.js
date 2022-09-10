@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
 import Projects from './Projects'
+import { Shop } from './Shop';
+import { Login } from './Login';
 
 function Content({ content }) {
     const contentRef = useRef(null);
@@ -19,13 +21,16 @@ function Content({ content }) {
         <div>{content.description}</div>
     </ContentPage>);
 }
+
 function Page({ content }) {
     const snap = useSnapshot(state);
 
     return (
         <ContentWrapper>
-            {content === "home" ? <Projects /> : null}
-            {content !== "home" && <Content content={content} />}
+            {(content === "home") ? <Projects />
+                : (content === "login") ? <Login />
+                    : (content === "shop") ? <Shop />
+                        : <Content content={content} />}
             {snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer mobile'>hello@afterdark.digital</a>}
         </ContentWrapper>
     );
@@ -36,10 +41,12 @@ export default Page;
 const ContentWrapper = styled.div`
     /* border: 1px solid #000; */
     height: 100%;
+    position: absolute;
     /* display: grid;
     grid-template-columns: 100%;
     grid-template-rows: 1fr 1fr; */
     display: flex;
+    /* position: fixed; */
     flex-direction: column;
     overflow: hidden;
     /* margin: 0 20px; */
@@ -47,7 +54,7 @@ const ContentWrapper = styled.div`
     /* @media screen and (max-width: 768px) {
     } */
 `
-const ContentPage = styled.div`
+export const ContentPage = styled.div`
     overflow-x: scroll;
     width: 100%;
     height: 100%;

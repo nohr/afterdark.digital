@@ -14,12 +14,12 @@ var y = 0;
 // --------------------------------------------------------------------------- //
 
 // I adjust the window scrolling in response to the given mousemove event.
-export function handleMousemove(event, element) {
+export function handleMousemove(event) {
 
+    // drawEdge();
     // Get the viewport-relative coordinates of the mousemove event.
     var viewportX = event.clientX;
     var viewportY = event.clientY;
-
     // Get the viewport dimensions.
     var viewportWidth = document.documentElement.clientWidth;
     var viewportHeight = document.documentElement.clientHeight;
@@ -102,10 +102,10 @@ export function handleMousemove(event, element) {
     // Adjust the window scroll based on the user's mouse position. Returns True
     // or False depending on whether or not the window scroll was changed.
     function adjustWindowScroll() {
-
         // Get the current scroll position of the document.
         var currentScrollX = window.scrollX;
         var currentScrollY = window.scrollY;
+        console.log(currentScrollX);
 
         // Determine if the window can be scrolled in any particular direction.
         var canScrollLeft = (currentScrollX > 0);
@@ -150,13 +150,15 @@ export function handleMousemove(event, element) {
         // first place.
         nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
         nextScrollY = Math.max(0, Math.min(maxScrollY, nextScrollY));
+        console.log(nextScrollX, currentScrollX);
+        console.log((nextScrollX !== currentScrollX) ||
+            (nextScrollY !== currentScrollY));
 
         if (
             (nextScrollX !== currentScrollX) ||
             (nextScrollY !== currentScrollY)
         ) {
-
-            element.current.scrollTo(nextScrollX, nextScrollY);
+            window.scrollTo(nextScrollX, nextScrollY);
             return (true);
 
         } else {
@@ -172,7 +174,7 @@ export function handleMousemove(event, element) {
 
 // I draw the grid and edge lines in the document so that it is clear where
 // scrolling will be initiated and with what intensity it is taking place.
-function drawEdge() {
+export function drawEdge() {
     // Draw the edges that delineate the scrolling zone.
     var edge = document.createElement("span");
     edge.style.position = "fixed";
@@ -181,7 +183,8 @@ function drawEdge() {
     edge.style.bottom = edgeSize - 50 + "px";
     edge.style.left = edgeSize + 80 + "px";
     edge.style.right = edgeSize + 81 + "px";
-    edge.style.border = "1px solid #f91a2a";
+    edge.style.border = "1px solid";
+    edge.style.borderColor = "#00000000 #f91a2a";
     edge.style.borderRadius = "5px 5px 5px 5px";
     document.body.appendChild(edge);
     edge.classList.add("edge");

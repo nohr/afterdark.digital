@@ -45,7 +45,7 @@ export default Contact;
 
 const FormWrapper = styled(motion.div)`
     padding: 10px;
-    height: 100%;
+    /* height: 100%; */
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -96,7 +96,7 @@ const Form = styled.form`
             margin: 10px auto;
             -webkit-appearance: none;
             /* border: 1px solid var(--offwhite); */
-            border-radius: 25px;
+            /* border-radius: 25px; */
             color: var(--offwhite);
             background-color: transparent !important;
         }

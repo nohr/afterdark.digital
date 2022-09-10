@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
-import { EmailIcon, HamburgerIcon, Logo } from '../utils/svg';
+import { HamburgerIcon, Logo } from '../utils/svg';
 import Contact from './Contact';
 
 function Header() {
@@ -22,14 +22,18 @@ function Header() {
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
                 <Logo />
-                <a className={`${snap.menu && 'active'} menu`}
+                <NavLink to={'/shop'}>Shop</NavLink>
+                <a
+                    className={`${snap.menu && 'active'} menu`}
                     onClick={() => state.menu = !snap.menu}>
                     <HamburgerIcon />
                 </a>
             </div>}
             {snap.mobile && <div className='Links'>
                 <Logo />
-                <a className={`${snap.menu && 'active'} menu`}
+                <NavLink to={'/shop'}>Shop</NavLink>
+                <a
+                    className={`${snap.menu && 'active'} menu`}
                     onTouchEnd={() => state.menu = !snap.menu}>
                     <HamburgerIcon />
                 </a>
@@ -44,7 +48,7 @@ export default Header
 const MetaNavWrapper = styled.div`
     height: max-content;
     /* width: min-content; */
-    position: absolute;
+    position: fixed;
     z-index: 4000;
     bottom: 0;
     left: 0;
@@ -62,7 +66,7 @@ const MetaNavWrapper = styled.div`
         position: relative !important;
         left: unset;
         bottom: unset;
-        width: 100%;
+        /* width: 100wv; */
     }
 `
 const NavWrapper = styled.div`
@@ -84,6 +88,7 @@ const NavWrapper = styled.div`
 
     @media screen and (max-width: 768px) {
         flex-direction: column;
+        width: 100vw;
 
          & .Links{
             justify-content: space-between !important;
@@ -100,6 +105,7 @@ const NavWrapper = styled.div`
     justify-content: flex-end;
          & .Links{
             justify-content: flex-end !important;
+            padding-left: 20px;
          }
     }
 
@@ -125,7 +131,7 @@ const NavWrapper = styled.div`
 
         & a:not(.Logo) {
             display: block;
-            font-size: 7vw;
+            font-size: 20px;
             text-transform: uppercase;
             padding: 5px;
             width: fit-content;
@@ -147,7 +153,7 @@ const NavWrapper = styled.div`
                 cursor: default;
                 border-color: var(--offwhite);
                 background-color: var(--black);
-                color: var(--black) !important;
+                color: var(--offwhite) !important;
             }
         }
         & a.menu{

@@ -11,7 +11,7 @@ import { handleMousemove } from '../utils/scroll'
 
 function Project({ project }) {
     return (<Tilt
-        options={{ reset: false, easing: "cubic-bezier(.03,.98,.52,.99)", }}
+        options={{ reset: false, easing: "cubic-bezier(0.03,0.98,0.52,0.99)", }}
         style={{ height: '100%' }}
     >
         <Card to={`/${project.id}`}>
@@ -131,7 +131,7 @@ function Projects() {
     // }, [])
 
     useEffect(() => {
-        CardsScroll.current.addEventListener("mousemove", (e) => handleMousemove(e, CardsScroll), false);
+        !snap.mobile && CardsScroll.current.addEventListener("mousemove", handleMousemove, false);
     }, [])
 
     return (<CardScroller
@@ -153,13 +153,14 @@ function Projects() {
 export default Projects
 
 const CardScroller = styled(motion.div)`
-    overflow-x: scroll;
-    width: 100%;
+    /* overflow-x: scroll; */
+    /* width: 100%; */
     height: 100%;
     margin: auto 0;
+    display: block;
 `
 const CardWrapper = styled.div`
-    width: max-content;
+    /* width: max-content; */
     height: 100%;
     transition: 0.3s;
     display: flex;
@@ -168,7 +169,7 @@ const CardWrapper = styled.div`
     align-items: center;
     /* column-gap: 10px; */
     padding: 100px 0;
-
+    width: fit-content;
     @media screen and (max-width: 768px) {
         padding: 40px 0;
         align-items: center;
@@ -181,10 +182,12 @@ const Card = styled(Link)`
     grid-template-rows: 1.5fr 0.25fr 0.25fr 1fr ;
     width: 95vw;
     height: 100%;
-    background-color: var(--blue);
+    background-color: transparent;
+    color: var(--black);
+    /* background-color: var(--blue); */
+    /* color: var(--offwhite); */
     overflow: hidden;
     text-decoration: none;
-    color: var(--offwhite);
 
     @media screen and (min-width: 768px) {
         width: 45vw;

@@ -4,90 +4,75 @@
     "project_name": "cubilia curae duis",
     "date": "7/15/2022",
     "description": "Nam dui. Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis.",
-    "image": "http://dummyimage.com/176x100.png/cc0000/ffffff"
+    "image": [
+      "http://dummyimage.com/176x100.png/cc0000/ffffff",
+      "http://dummyimage.com/122x100.png/ff4444/ffffff",
+      "http://dummyimage.com/187x100.png/5fa2dd/ffffff"
+    ]
   },
   {
     "id": "volutpat",
     "project_name": "tristique in",
     "date": "12/19/2021",
     "description": "Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem. Fusce consequat.",
-    "image": "http://dummyimage.com/187x100.png/5fa2dd/ffffff"
+    "image": [
+      "http://dummyimage.com/187x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/221x100.png/dddddd/000000",
+      "http://dummyimage.com/170x100.png/ff4444/ffffff"
+    ]
   },
   {
     "id": "auctor",
     "project_name": "eu",
     "date": "6/9/2022",
     "description": "Cras pellentesque volutpat dui.",
-    "image": "http://dummyimage.com/106x100.png/5fa2dd/ffffff"
+    "image": [
+      "http://dummyimage.com/106x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/187x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/209x100.png/ff4444/ffffff"
+    ]
   },
   {
     "id": "rhoncus",
     "project_name": "eu",
     "date": "9/9/2021",
     "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus. Vestibulum quam sapien, varius ut, blandit non, interdum in, ante.",
-    "image": "http://dummyimage.com/221x100.png/dddddd/000000"
+    "image": [
+      "http://dummyimage.com/221x100.png/dddddd/000000",
+      "http://dummyimage.com/211x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/152x100.png/5fa2dd/ffffff"
+    ]
   },
   {
     "id": "maecenas",
     "project_name": "placerat ante nulla justo aliquam",
     "date": "5/6/2022",
     "description": "Aenean lectus. Pellentesque eget nunc. Donec quis orci eget orci vehicula condimentum.",
-    "image": "http://dummyimage.com/211x100.png/5fa2dd/ffffff"
+    "image": [
+      "http://dummyimage.com/211x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/148x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/134x100.png/dddddd/000000"
+    ]
   },
   {
     "id": "eros",
     "project_name": "massa id",
     "date": "3/16/2022",
     "description": "Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",
-    "image": "http://dummyimage.com/148x100.png/5fa2dd/ffffff"
+    "image": [
+      "http://dummyimage.com/148x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/221x100.png/dddddd/000000"
+    ]
   },
   {
     "id": "ut",
     "project_name": "dapibus",
     "date": "11/4/2021",
     "description": "Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est.",
-    "image": "http://dummyimage.com/220x100.png/5fa2dd/ffffff"
-  },
-  {
-    "id": "erat",
-    "project_name": "at velit vivamus vel nulla",
-    "date": "7/16/2022",
-    "description": "Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit.",
-    "image": "http://dummyimage.com/170x100.png/ff4444/ffffff"
-  },
-  {
-    "id": "nulla",
-    "project_name": "eu nibh quisque",
-    "date": "8/18/2022",
-    "description": "In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin interdum mauris non ligula pellentesque ultrices. Phasellus id sapien in sapien iaculis congue.",
-    "image": "http://dummyimage.com/209x100.png/ff4444/ffffff"
-  },
-  {
-    "id": "nec",
-    "project_name": "elit",
-    "date": "2/8/2022",
-    "description": "Sed accumsan felis. Ut at dolor quis odio consequat varius. Integer ac leo.",
-    "image": "http://dummyimage.com/134x100.png/dddddd/000000"
-  },
-  {
-    "id": "nam",
-    "project_name": "odio consequat",
-    "date": "9/21/2021",
-    "description": "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-    "image": "http://dummyimage.com/195x100.png/cc0000/ffffff"
-  },
-  {
-    "id": "amet",
-    "project_name": "suspendisse ornare consequat",
-    "date": "3/29/2022",
-    "description": "Donec semper sapien a libero. Nam dui.",
-    "image": "http://dummyimage.com/152x100.png/5fa2dd/ffffff"
-  },
-  {
-    "id": "platea",
-    "project_name": "nibh ligula",
-    "date": "3/19/2022",
-    "description": "Nulla justo. Aliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
-    "image": "http://dummyimage.com/122x100.png/ff4444/ffffff"
+    "image": [
+      "http://dummyimage.com/220x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/152x100.png/5fa2dd/ffffff",
+      "http://dummyimage.com/170x100.png/ff4444/ffffff"
+    ]
   }
 ]
