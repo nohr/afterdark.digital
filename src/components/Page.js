@@ -51,8 +51,14 @@ const ContentWrapper = styled.div`
     overflow: hidden;
     /* margin: 0 20px; */
 
-    /* @media screen and (max-width: 768px) {
-    } */
+    @media screen and (max-width: 768px) {    
+        padding-top: 60px;
+        a.footer{
+            position: fixed;
+            bottom: 0;
+            width: 100vw;
+        }
+    }
 `
 export const ContentPage = styled.div`
     overflow-x: scroll;

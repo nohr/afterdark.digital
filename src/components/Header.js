@@ -18,10 +18,16 @@ function Header() {
 
 
     return (<MetaNavWrapper>
-        {snap.menu && <Contact />}
+        {snap.menu &&
+            <>
+                <Contact />
+                {snap.mobile &&
+                    <NavLink to={'/shop'}>Shop</NavLink>}
+            </>}
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
                 <Logo />
+                <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>
                 <NavLink to={'/shop'}>Shop</NavLink>
                 <a
                     className={`${snap.menu && 'active'} menu`}
@@ -31,7 +37,6 @@ function Header() {
             </div>}
             {snap.mobile && <div className='Links'>
                 <Logo />
-                <NavLink to={'/shop'}>Shop</NavLink>
                 <a
                     className={`${snap.menu && 'active'} menu`}
                     onTouchEnd={() => state.menu = !snap.menu}>
@@ -39,7 +44,7 @@ function Header() {
                 </a>
             </div>}
         </NavWrapper>
-        {!snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>}
+        {/* {!snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>} */}
     </MetaNavWrapper>)
 }
 
@@ -47,7 +52,7 @@ export default Header
 
 const MetaNavWrapper = styled.div`
     height: max-content;
-    /* width: min-content; */
+    width: 100%;
     position: fixed;
     z-index: 4000;
     bottom: 0;
@@ -57,13 +62,14 @@ const MetaNavWrapper = styled.div`
     flex-direction: column;
     color: var(--offwhite) !important;
     a.caption{
-
+        justify-content: flex-start;
         &:hover{
             background-color: var(--black);
         }
     }
     @media screen and (max-width: 768px) {
-        position: relative !important;
+        /* position: relative !important; */
+        top: 0;
         left: unset;
         bottom: unset;
         /* width: 100wv; */
@@ -81,7 +87,7 @@ const NavWrapper = styled.div`
     /* padding-bottom: 10px; */
     /* padding: 20px !important; */
     /* transform:skewY(10deg) !important; */
-
+    
     & *{
         transition: 0.3s !important;
     }
@@ -179,7 +185,7 @@ export const SvgLogo = styled(NavLink)`
     width: 100%;
 
     svg{
-            overflow: visible !important;
+        overflow: visible !important;
         fill: transparent;
         stroke: var(--offwhite);
         stroke-width: 1px;

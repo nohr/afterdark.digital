@@ -10,17 +10,28 @@ import { handleMousemove } from '../utils/scroll'
 
 
 function Project({ project }) {
-    return (<Tilt
-        options={{ reset: false, easing: "cubic-bezier(0.03,0.98,0.52,0.99)", }}
-        style={{ height: '100%' }}
-    >
-        <Card to={`/${project.id}`}>
+    const snap = useSnapshot(state);
+    if (snap.mobile) {
+        return (<Card to={`/${project.id}`}>
             <img src={`${project.image}`} />
             <div className='title'>{project.project_name}</div>
             <div>{project.date}</div>
             <div>{project.description}</div>
-        </Card>
-    </Tilt>)
+        </Card>)
+    } else {
+        return (<Tilt
+            options={{ reset: false, easing: "cubic-bezier(0.03,0.98,0.52,0.99)", }}
+            style={{ height: '100%' }}
+        >
+            <Card to={`/${project.id}`}>
+                <img src={`${project.image}`} />
+                <div className='title'>{project.project_name}</div>
+                <div>{project.date}</div>
+                <div>{project.description}</div>
+            </Card>
+        </Tilt>)
+    }
+
 }
 
 function Projects() {
@@ -171,7 +182,7 @@ const CardWrapper = styled.div`
     padding: 100px 0;
     width: fit-content;
     @media screen and (max-width: 768px) {
-        padding: 40px 0;
+        padding: 0;
         align-items: center;
     }
 `

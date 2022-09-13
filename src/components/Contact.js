@@ -45,13 +45,17 @@ export default Contact;
 
 const FormWrapper = styled(motion.div)`
     padding: 10px;
+    margin: 0 auto;
     /* height: 100%; */
-    width: 100%;
+    width: 60ch;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: white !important;
+    color: var(--offwhite) !important;
 
+    @media screen and (max-width: 768px) {
+       width: 100%;
+    }
 
     & h2{
         padding: 0 0 5px 0;
