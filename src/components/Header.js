@@ -6,7 +6,7 @@ import { state } from '../utils/state';
 import { HamburgerIcon, Logo } from '../utils/svg';
 import Contact from './Contact';
 
-function Header() {
+function Header({ header }) {
     const navWrap = useRef(null);
     const snap = useSnapshot(state);
 
@@ -17,13 +17,7 @@ function Header() {
     });
 
 
-    return (<MetaNavWrapper>
-        {snap.menu &&
-            <>
-                <Contact />
-                {snap.mobile &&
-                    <NavLink to={'/shop'}>Shop</NavLink>}
-            </>}
+    return (<MetaNavWrapper ref={header}>
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
                 <Logo />
@@ -44,6 +38,10 @@ function Header() {
                 </a>
             </div>}
         </NavWrapper>
+        {(snap.menu) && <>
+            {snap.mobile && <NavLink to={'/shop'}>Shop</NavLink>}
+            <Contact />
+        </>}
         {/* {!snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>} */}
     </MetaNavWrapper>)
 }
@@ -55,12 +53,15 @@ const MetaNavWrapper = styled.div`
     width: 100%;
     position: fixed;
     z-index: 4000;
-    bottom: 0;
-    left: 0;
+    top: 0;
+    /* left: 0; */
     background-color: var(--blue);
     display: flex;
     flex-direction: column;
     color: var(--offwhite) !important;
+        & *{
+        transition: 0.3s !important;
+    }
     a.caption{
         justify-content: flex-start;
         &:hover{
@@ -88,9 +89,7 @@ const NavWrapper = styled.div`
     /* padding: 20px !important; */
     /* transform:skewY(10deg) !important; */
     
-    & *{
-        transition: 0.3s !important;
-    }
+
 
     @media screen and (max-width: 768px) {
         flex-direction: column;

@@ -1,0 +1,67 @@
+[debug] [2022-09-23T11:10:11.103Z] ----------------------------------------------------------------------
+[debug] [2022-09-23T11:10:11.105Z] Command:       /usr/local/bin/firebase /Users/aitenoria/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase emulators:start
+[debug] [2022-09-23T11:10:11.105Z] CLI Version:   9.23.0
+[debug] [2022-09-23T11:10:11.105Z] Platform:      darwin
+[debug] [2022-09-23T11:10:11.106Z] Node Version:  v12.18.1
+[debug] [2022-09-23T11:10:11.110Z] Time:          Fri Sep 23 2022 07:10:11 GMT-0400 (Eastern Daylight Time)
+[debug] [2022-09-23T11:10:11.110Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-09-23T11:10:11.116Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2022-09-23T11:10:11.186Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-09-23T11:10:11.186Z] > authorizing via signed-in user (aite@nabla.ooo)
+[info] i  emulators: Starting emulators: firestore, hosting {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: firestore, hosting"}}
+[debug] [2022-09-23T11:10:11.203Z] [hub] writing locator at /var/folders/1p/p7_2kh0x0x95hv75kjn3fjrc0000gn/T/hub-afterdark-digital.json
+[debug] [2022-09-23T11:10:11.220Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2022-09-23T11:10:11.221Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2022-09-23T11:10:11.221Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/Users/aitenoria/.cache/firebase/emulators/cloud-firestore-emulator-v1.13.1.jar","--host","localhost","--port",8080,"--rules","/Users/aitenoria/Code/afterdark.digital/firestore.rules"],"optionalArgs":["port","webchannel_port","host","rules","functions_emulator","seed_from_export"],"joinArgs":false} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/Users/aitenoria/.cache/firebase/emulators/cloud-firestore-emulator-v1.13.1.jar\",\"--host\",\"localhost\",\"--port\",8080,\"--rules\",\"/Users/aitenoria/Code/afterdark.digital/firestore.rules\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"functions_emulator\",\"seed_from_export\"],\"joinArgs\":false}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[debug] [2022-09-23T11:10:11.294Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2022-09-23T11:10:11.294Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2022-09-23T11:10:12.483Z] Sep 23, 2022 7:10:12 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://localhost:61060
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Sep 23, 2022 7:10:12 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://localhost:61060\n"}}
+[debug] [2022-09-23T11:10:12.498Z] API endpoint: http://localhost {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://localhost"}}
+[debug] [2022-09-23T11:10:12.498Z] :8080
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+
+   export FIRESTORE_EMULATOR_HOST=localhost:8080
+
+Dev App Server is now running.
+
+ {"metadata":{"emulator":{"name":"firestore"},"message":":8080\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=localhost:8080\n\nDev App Server is now running.\n\n"}}
+[debug] [2022-09-23T11:10:12.526Z] > refreshing access token with scopes: []
+[debug] [2022-09-23T11:10:12.526Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-09-23T11:10:12.654Z] <<< HTTP RESPONSE 200 {"date":"Fri, 23 Sep 2022 11:10:12 GMT","expires":"Mon, 01 Jan 1990 00:00:00 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-09-23T11:10:12.670Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/afterdark-digital/sites 
+[debug] [2022-09-23T11:10:13.139Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/afterdark-digital/sites 200
+[debug] [2022-09-23T11:10:13.152Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/afterdark-digital/sites {"sites":[{"name":"projects/afterdark-digital/sites/afterdark-digital","defaultUrl":"https://afterdark-digital.web.app","appId":"1:511862499661:web:04ae6d79d97959b8d42f04","type":"DEFAULT_SITE"}]}
+[debug] [2022-09-23T11:10:13.153Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/afterdark-digital/webApps/1:511862499661:web:04ae6d79d97959b8d42f04/config [none]
+[debug] [2022-09-23T11:10:13.713Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/afterdark-digital/webApps/1:511862499661:web:04ae6d79d97959b8d42f04/config 200
+[debug] [2022-09-23T11:10:13.713Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/afterdark-digital/webApps/1:511862499661:web:04ae6d79d97959b8d42f04/config {"projectId":"afterdark-digital","appId":"1:511862499661:web:04ae6d79d97959b8d42f04","storageBucket":"afterdark-digital.appspot.com","locationId":"us-central","apiKey":"AIzaSyBnqc3JrCowRVEO1PgKCizHp89pqYGsguA","authDomain":"afterdark-digital.firebaseapp.com","messagingSenderId":"511862499661","measurementId":"G-J44LSPHSR9"}
+[info] i  hosting: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
+[info] ✔  hosting: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[debug] [2022-09-23T11:10:13.765Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2022-09-23T11:10:13.765Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2022-09-23T11:10:13.765Z] Starting Emulator UI with command {"binary":"node","args":["/Users/aitenoria/.cache/firebase/emulators/ui-v1.6.4/server.bundle.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/Users/aitenoria/.cache/firebase/emulators/ui-v1.6.4/server.bundle.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2022-09-23T11:10:13.961Z] Web / API server started at localhost:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at localhost:4000\n"}}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://localhost:4000                │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Firestore │ localhost:8080 │ http://localhost:4000/firestore │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Hosting   │ localhost:5000 │ n/a                             │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub running at localhost:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 

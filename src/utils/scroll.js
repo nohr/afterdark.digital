@@ -2,7 +2,7 @@
 
 // TODO: fix
 
-var edgeSize = 200;
+export const edgeSize = 200;
 var timer = null;
 
 var maxStep = 30;
@@ -105,7 +105,7 @@ export function handleMousemove(event) {
         // Get the current scroll position of the document.
         var currentScrollX = window.scrollX;
         var currentScrollY = window.scrollY;
-        console.log(currentScrollX);
+        // console.log(currentScrollX);
 
         // Determine if the window can be scrolled in any particular direction.
         var canScrollLeft = (currentScrollX > 0);
@@ -150,9 +150,9 @@ export function handleMousemove(event) {
         // first place.
         nextScrollX = Math.max(0, Math.min(maxScrollX, nextScrollX));
         nextScrollY = Math.max(0, Math.min(maxScrollY, nextScrollY));
-        console.log(nextScrollX, currentScrollX);
-        console.log((nextScrollX !== currentScrollX) ||
-            (nextScrollY !== currentScrollY));
+        // console.log(nextScrollX, currentScrollX);
+        // console.log((nextScrollX !== currentScrollX) ||
+        //     (nextScrollY !== currentScrollY));
 
         if (
             (nextScrollX !== currentScrollX) ||
@@ -169,23 +169,4 @@ export function handleMousemove(event) {
 
     }
 
-}
-
-
-// I draw the grid and edge lines in the document so that it is clear where
-// scrolling will be initiated and with what intensity it is taking place.
-export function drawEdge() {
-    // Draw the edges that delineate the scrolling zone.
-    var edge = document.createElement("span");
-    edge.style.position = "fixed";
-    edge.style.zIndex = "-3";
-    edge.style.top = edgeSize - 50 + "px";
-    edge.style.bottom = edgeSize - 50 + "px";
-    edge.style.left = edgeSize + 80 + "px";
-    edge.style.right = edgeSize + 81 + "px";
-    edge.style.border = "1px solid";
-    edge.style.borderColor = "#00000000 #f91a2a";
-    edge.style.borderRadius = "5px 5px 5px 5px";
-    document.body.appendChild(edge);
-    edge.classList.add("edge");
 }

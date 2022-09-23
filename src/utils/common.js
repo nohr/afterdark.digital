@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getStorage } from "firebase/storage";
+import { getFirestore } from 'firebase/firestore/lite'
 
 const firebaseConfig = {
     apiKey: "AIzaSyBnqc3JrCowRVEO1PgKCizHp89pqYGsguA",
@@ -18,3 +17,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+export const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+export const signInWithGoogle = () => signInWithPopup(auth, provider);
+
+export const storage = getStorage(app);
+export const db = getFirestore();

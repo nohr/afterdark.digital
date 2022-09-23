@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
+import { Dashboard } from './Dashboard';
 import Projects from './Projects'
 import { Shop } from './Shop';
-import { Login } from './Login';
 
 function Content({ content }) {
     const contentRef = useRef(null);
@@ -22,13 +22,23 @@ function Content({ content }) {
     </ContentPage>);
 }
 
-function Page({ content }) {
-    const snap = useSnapshot(state);
 
+
+function Page({ content, header }) {
+    const snap = useSnapshot(state);
+    const [padding, setPadding] = useState(0);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        setPadding(header.current.clientHeight)
+    }, [])
     return (
-        <ContentWrapper>
-            {(content === "home") ? <Projects />
-                : (content === "login") ? <Login />
+        <ContentWrapper
+            width={!(content === "home") ? "100%" : null}
+            style={{ paddingTop: padding }}
+        >
+            {(content === "home") ? <Projects user={user} />
+                : (content === "dashboard") ? <Dashboard user={user} setUser={setUser} />
                     : (content === "shop") ? <Shop />
                         : <Content content={content} />}
             {snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer mobile'>hello@afterdark.digital</a>}
@@ -39,8 +49,8 @@ function Page({ content }) {
 export default Page;
 
 const ContentWrapper = styled.div`
-    /* border: 1px solid #000; */
     height: 100%;
+    width: ${props => props.width};
     position: absolute;
     /* display: grid;
     grid-template-columns: 100%;
