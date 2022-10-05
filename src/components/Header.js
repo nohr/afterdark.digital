@@ -6,43 +6,37 @@ import { state } from '../utils/state';
 import { HamburgerIcon, Logo } from '../utils/svg';
 import Contact from './Contact';
 
-function Header({ header }) {
+function Header({ header, user }) {
     const navWrap = useRef(null);
     const snap = useSnapshot(state);
 
     useEffect(() => {
         if (navWrap.current) {
-            navWrap.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
+            navWrap.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: true });
         }
     });
-
 
     return (<MetaNavWrapper ref={header}>
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
+                <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Book Us</a>
+                {user && <NavLink to={'/dashboard'}>Dashboard</NavLink>}
                 <Logo />
-                <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>
                 <NavLink to={'/shop'}>Shop</NavLink>
-                <a
-                    className={`${snap.menu && 'active'} menu`}
-                    onClick={() => state.menu = !snap.menu}>
-                    <HamburgerIcon />
-                </a>
+                <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>
             </div>}
             {snap.mobile && <div className='Links'>
                 <Logo />
-                <a
-                    className={`${snap.menu && 'active'} menu`}
-                    onTouchEnd={() => state.menu = !snap.menu}>
-                    <HamburgerIcon />
-                </a>
+                <a onTouchEnd={() => state.menu = !snap.menu}> <HamburgerIcon /> </a>
             </div>}
         </NavWrapper>
         {(snap.menu) && <>
-            {snap.mobile && <NavLink to={'/shop'}>Shop</NavLink>}
+            {snap.mobile && <div>
+                <NavLink to={'/shop'}><h1>Shop</h1></NavLink>
+                {user && <NavLink to={'/dashboard'}><h1>Dashboard</h1></NavLink>}
+            </div>}
             <Contact />
         </>}
-        {/* {!snap.mobile && <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>} */}
     </MetaNavWrapper>)
 }
 
@@ -59,9 +53,16 @@ const MetaNavWrapper = styled.div`
     display: flex;
     flex-direction: column;
     color: var(--offwhite) !important;
-        & *{
+    
+    & *{
         transition: 0.3s !important;
     }
+
+    a{
+        color: var(--offwhite);
+        width:min-content;
+    }
+
     a.caption{
         justify-content: flex-start;
         &:hover{
@@ -89,8 +90,6 @@ const NavWrapper = styled.div`
     /* padding: 20px !important; */
     /* transform:skewY(10deg) !important; */
     
-
-
     @media screen and (max-width: 768px) {
         flex-direction: column;
         width: 100vw;
@@ -106,13 +105,7 @@ const NavWrapper = styled.div`
          }
     }
 
-    @media screen and (min-width: 768px) {
-    justify-content: flex-end;
-         & .Links{
-            justify-content: flex-end !important;
-            padding-left: 20px;
-         }
-    }
+
 
     & .Links{
         height: auto;
@@ -123,13 +116,18 @@ const NavWrapper = styled.div`
         font-weight: 700;
         font-style: italic;
         align-items: center;
-
+    @media screen and (min-width: 768px) {
+        justify-content: center;
+    }
         & a.Logo{
             overflow: visible !important;
             & svg{
              @media screen and (max-width: 768px) {
-                width: auto;
-                height: 42px;
+                width: auto !important;
+                height: 42px !important;
+             }
+             @media screen and (max-width: 1366px) {
+                width: 27vw;
              }
             }
         }
@@ -137,12 +135,13 @@ const NavWrapper = styled.div`
         & a:not(.Logo) {
             display: block;
             font-size: 20px;
+            text-decoration: none;
             text-transform: uppercase;
             padding: 5px;
             width: fit-content;
             height: 42px;
             white-space: nowrap;
-            /* border: 1px solid var(--offwhite);  */
+            justify-content: center;
             background-color: transparent;
             color: var(--offwhite);
             display: flex;
@@ -182,12 +181,14 @@ const NavWrapper = styled.div`
 `
 export const SvgLogo = styled(NavLink)`
     width: 100%;
+    cursor: pointer;
 
     svg{
         overflow: visible !important;
-        fill: transparent;
+        /* fill: transparent;
         stroke: var(--offwhite);
-        stroke-width: 1px;
+        stroke-width: 1px; */
+        fill: var(--offwhite);
         width: auto;
         height: 62px;
 

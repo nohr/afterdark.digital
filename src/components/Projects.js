@@ -38,7 +38,7 @@ function Project({ project }) {
 
 }
 
-function Projects({ user }) {
+function Projects() {
     const snap = useSnapshot(state);
     const CardsScroll = useRef(null);
     // let svg;
@@ -158,9 +158,6 @@ function Projects({ user }) {
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
         <CardWrapper>
-            {user ? <Card
-                style={{ width: '200px', height: '200px', margin: '0 10vh' }}
-                to={'/dashboard'}> edit projects </Card> : null}
             {snap.data.map((project, key) => (
                 <Project project={project} key={key} />
             ))}
