@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import styled from 'styled-components';
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
+import InstagramEmbed from 'react-instagram-embed';
 
 
 function Login() {
@@ -16,6 +17,7 @@ function Login() {
         </button>
     </ContentPage>);
 }
+
 function Preview({ pics }) {
     const [preview, setPreview] = useState(`Upload and click 'Add Image' to preview.`);
 
@@ -30,16 +32,15 @@ function Preview({ pics }) {
     return (<div className='slideshow'>{preview}</div>);
 }
 
+const blobs = [];
 function Home() {
     const snap = useSnapshot(state);
     const form = useRef(null);
     const file = useRef(null);
-    const embed = useRef(null);
+    const tikEmbed = useRef(null);
+    const igEmbed = useRef(null);
     const [pics, setPics] = useState([]);
-    let blobs = [];
     let pic = [];
-    // const [embeds, setEmbeds] = useState([]);
-    const reader = new FileReader();
 
     function submitPortfolio(e) {
         e.prevent.default();
@@ -48,27 +49,73 @@ function Home() {
         // const storageRef = ref(storage, `portfolio/${}`);
     }
 
-    function handleImage() {
-        reader.onload = function (e) {
-            pic.push(<img className='previewimage' key={Math.random()} src={e.target.result} />);
+    function handleFormat(file) {
+        function removeItem(e) {
+            // Remove from blob array
+            const index = blobs.indexOf(file);
+            if (index > -1) blobs.splice(index, 1);
+
+            // Remove element from preview array (pics)
+            const index1 = pic.findIndex(({ props }) => props.src === e.target.src);
+            if (index1 >= 0) pic.splice(index1, 1);
             setPics(pics.concat(pic));
         }
-        for (let i = 0; i < file.current.files.length; i++) {
-            reader.readAsDataURL(file.current.files.item(i));
-            blobs.push(file.current.files.item(i));
+        if (file.type && file.type.includes("image")) {
+            pic.push(<img onClick={removeItem} className='previewimage' key={Math.random()} src={URL.createObjectURL(file)} />);
+        }
+        if (file.type && file.type.includes("video")) {
+            pic.push(<video autoPlay muted loop onClick={removeItem} className='previewimage' key={Math.random()} src={URL.createObjectURL(file)}></video>);
+        }
+
+        setPics(pics.concat(pic));
+    }
+
+    function handleInsta(string) {
+        pic.push(<InstagramEmbed
+            url={string}
+            // clientAccessToken='424952173042550|858fe119bd7bb8d6f2217837f3d6e4cc'
+            maxWidth={500}
+            hideCaption={false}
+            containerTagName="div"
+            injectScript
+        />);
+        setPics(pics.concat(pic));
+    }
+    function handleTikTok(string) {
+        pic.push(<><iframe
+            src={`https://www.tiktok.com/embed/${string}`}
+            allowfullscreen
+            scrolling="no"
+            allow="encrypted-media;"
+        ></iframe></>);
+        setPics(pics.concat(pic));
+    }
+
+    function handleImage() {
+        var files = file.current.files;
+
+        for (let file of files) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                handleFormat(file);
+            };
+            reader.readAsDataURL(file);
+            blobs.push(file);
         }
 
         if (file.current.files) {
             file.current.value = [];
         }
-        embed.current.value = null;
-        console.log(blobs);
+        if (igEmbed.current.value) {
+            handleInsta(igEmbed.current.value)
+        }
+        if (tikEmbed.current.value) {
+            handleTikTok(tikEmbed.current.value)
+        }
+
+        igEmbed.current.value = null;
+        tikEmbed.current.value = null;
     }
-
-    useEffect(() => {
-
-    }, [])
-
 
     return (<ContentPage>
         <div className='homebar'>
@@ -77,24 +124,23 @@ function Home() {
         </div>
         <div className='dash'>
             <form ref={form}>
-                <label>
+                <div>
                     Metadata
                     <input type="text" placeholder='Name' required></input>
                     <textarea className='desc' type="text" placeholder='Description'></textarea>
                     <input type="text" placeholder='Project URL'></input>
-                </label>
-                <label>
+                </div>
+                <div>
                     Images
                     {snap.mobile && <Preview pics={pics} />}
-                    <input type="file" placeholder='Image' accept='image/*' ref={file}></input>
-                    <input type="text" placeholder='Social Media URL' ref={embed}></input>
+                    <input multiple type="file" placeholder='Image' ref={file}></input>
+                    <input type="text" placeholder='Instagram URL' ref={igEmbed}></input>
+                    <input type="text" placeholder='TikTok ID' ref={tikEmbed}></input>
                     <button style={{ width: "50%" }} type='button' onClick={handleImage}>Add Image</button>
-
-                </label>
-                <label className='submit' style={{ border: "1px solid var(--blue)" }}>
-                    Submit
-                    <button style={{ width: "50%" }} type='submit'>Submit Post</button>
-                </label>
+                </div>
+                <div className='submit' style={{ border: "1px solid var(--blue)" }}>
+                    <button style={{ width: "90%" }} type='submit'>Submit Post</button>
+                </div>
             </form>
             {!snap.mobile && <Preview pics={pics} />}
         </div>
@@ -113,10 +159,11 @@ export function Dashboard({ user, setUser }) {
         })
     }, [])
 
-
-    return (<ContentPage>
-        {user ? <Home /> : <Login />}
-    </ContentPage>);
+    if (user) {
+        return <Home />
+    } else {
+        return <Login />
+    }
 }
 
 const ContentPage = styled.div`
@@ -140,13 +187,40 @@ const ContentPage = styled.div`
         flex-direction: row;
         height: 100%;
         width: 100%;
+        
         @media screen and (max-width: 768px) {
             overflow-y: scroll;
             flex-direction: column;
         }
     }
+   form{
+        @media screen and (max-width: 768px) {
+            overflow-y: unset;
+            width: 100%;
+        }
 
+        @media screen and (min-width: 768px) {
+            overflow-y: scroll;
+            width: 33vw;
+        }
+
+        padding: 20px;
+        display: flex;
+        flex-direction: column !important;
+        justify-content: space-evenly;
+        row-gap: 20px;
+
+        div{
+            row-gap: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+    }
     input,textarea{
+        &:focus{
+            outline: none;
+            border-width: 3px;
+        }
         padding: 0 5px;
         font-size: 16px;
         background-color: transparent !important;
@@ -170,6 +244,7 @@ const ContentPage = styled.div`
         display: block;
         cursor: pointer;
         width: 100%;
+        height: 30px;
         padding: 5px 10px !important;
         margin: 10px auto;
         -webkit-appearance: none;
@@ -177,37 +252,13 @@ const ContentPage = styled.div`
         border: none;
         background-color: var(--blue) !important;
     }
-    form{
-        @media screen and (max-width: 768px) {
-            overflow-y: unset;
-        }
-
-        @media screen and (min-width: 768px) {
-            width: 640px;
-        }
-
-        padding: 20px;
-        overflow-y: scroll;
-        /* height: 100%; */
-        width: 100%;
-        display: flex;
-        flex-direction: column !important;
-        width: fit-content;
-        justify-content: space-evenly;
-        row-gap: 20px;
-
-    label{
-        row-gap: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-}
+ 
 
     .submit{
         align-self: center;
         align-items: center;
         border-radius: 5px;
-        width: 70%;
+        width: 50%;
         row-gap: 0;
     }
     
@@ -219,9 +270,19 @@ const ContentPage = styled.div`
         flex-wrap: nowrap;
         overflow-x: scroll !important;
         align-items: center;
+        position: relative;
+
+        iframe{
+            height: 80%;
+            border: none;
+        }
     }
 
     .previewimage{
-        height: 300px;
+        height: 400px;
+        cursor: not-allowed;
+        &:hover{
+            opacity: 0.5;
+        }
     }
 `
