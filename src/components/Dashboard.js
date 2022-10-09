@@ -73,7 +73,7 @@ function Home() {
     function handleInsta(string) {
         pic.push(<InstagramEmbed
             url={string}
-            // clientAccessToken='424952173042550|858fe119bd7bb8d6f2217837f3d6e4cc'
+            clientAccessToken='511621404189406|858fe119bd7bb8d6f2217837f3d6e4cc'
             maxWidth={500}
             hideCaption={false}
             containerTagName="div"
@@ -82,12 +82,12 @@ function Home() {
         setPics(pics.concat(pic));
     }
     function handleTikTok(string) {
-        pic.push(<><iframe
+        pic.push(<iframe
             src={`https://www.tiktok.com/embed/${string}`}
-            allowfullscreen
+            sandbox=''
             scrolling="no"
             allow="encrypted-media;"
-        ></iframe></>);
+        ></iframe>);
         setPics(pics.concat(pic));
     }
 
@@ -241,6 +241,7 @@ const ContentPage = styled.div`
         }
     }
     button{
+        white-space: nowrap;
         display: block;
         cursor: pointer;
         width: 100%;
@@ -252,7 +253,6 @@ const ContentPage = styled.div`
         border: none;
         background-color: var(--blue) !important;
     }
- 
 
     .submit{
         align-self: center;
