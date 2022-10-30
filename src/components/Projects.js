@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
-// import { arc, pie, select } from 'd3'
 import { state } from '../utils/state'
 import { useSnapshot } from 'valtio'
 import { Link } from 'react-router-dom'
@@ -35,9 +34,7 @@ function Project({ project }) {
             </Card>
         </Tilt>)
     }
-
 }
-
 function Projects() {
     const snap = useSnapshot(state);
     const CardsScroll = useRef(null);
@@ -147,7 +144,7 @@ function Projects() {
 
     useEffect(() => {
         !snap.mobile && CardsScroll.current.addEventListener("mousemove", handleMousemove, false);
-    }, [])
+    }, [snap.mobile])
 
     return (<CardScroller
         ref={CardsScroll}

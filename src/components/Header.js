@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
@@ -9,6 +9,7 @@ import Contact from './Contact';
 function Header({ header, user }) {
     const navWrap = useRef(null);
     const snap = useSnapshot(state);
+    let location = useLocation();
 
     useEffect(() => {
         if (navWrap.current) {
@@ -16,11 +17,18 @@ function Header({ header, user }) {
         }
     });
 
+    useEffect(() => {
+        return () => {
+            state.menu = false;
+        }
+    }, [location])
+
+
     return (<MetaNavWrapper ref={header}>
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
                 <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Book Us</a>
-                {user && <NavLink to={'/dashboard'}>Dashboard</NavLink>}
+                {user && <NavLink to={'/Editor'}>Editor</NavLink>}
                 <Logo />
                 <NavLink to={'/shop'}>Shop</NavLink>
                 <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>
@@ -33,7 +41,8 @@ function Header({ header, user }) {
         {(snap.menu) && <>
             {snap.mobile && <div>
                 <NavLink to={'/shop'}><h1>Shop</h1></NavLink>
-                {user && <NavLink to={'/dashboard'}><h1>Dashboard</h1></NavLink>}
+                {/* {user && <NavLink to={'/Editor'}><h1>Editor</h1></NavLink>} */}
+                <NavLink to={'/Editor'}><h1>Editor</h1></NavLink>
             </div>}
             <Contact />
         </>}
@@ -53,6 +62,7 @@ const MetaNavWrapper = styled.div`
     display: flex;
     flex-direction: column;
     color: var(--offwhite) !important;
+    border-bottom: 1px solid var(--blue);
     
     & *{
         transition: 0.3s !important;
@@ -135,6 +145,7 @@ const NavWrapper = styled.div`
         & a:not(.Logo) {
             display: block;
             font-size: 20px;
+            font-weight: 400;
             text-decoration: none;
             text-transform: uppercase;
             padding: 5px;

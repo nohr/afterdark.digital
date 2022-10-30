@@ -4,7 +4,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Page from "./components/Page";
 import { useSnapshot } from "valtio";
 import { state } from "./utils/state";
-import { Dashboard } from "./components/Dashboard";
+import { Editor } from "./components/Editor";
 import { Shop } from "./components/Shop";
 import Projects from "./components/Projects";
 import styled from "styled-components";
@@ -38,7 +38,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Projects />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/dashboard" element={<Dashboard user={user} setUser={setUser} />} />
+          <Route path="/editor" element={<Editor user={user} setUser={setUser} />} />
           {snap.data.map((value, index) => (
             <Route path={`/${value.id}`} key={index} element={<Page content={value} />} />
           ))}

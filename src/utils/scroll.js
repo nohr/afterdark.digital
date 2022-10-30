@@ -1,13 +1,10 @@
 // a modefied version of Ben Nadel's code https://github.com/bennadel/JavaScript-Demos/tree/master/demos/window-edge-scrolling
 
-// TODO: fix
-
 export const edgeSize = 200;
 var timer = null;
 
 var maxStep = 30;
 var y = 0;
-
 
 
 // --------------------------------------------------------------------------- //
@@ -123,21 +120,22 @@ export function handleMousemove(event) {
         // gets the viewport edge. As such, we'll calculate the percentage that
         // the user has made it "through the edge" when calculating the delta.
         // Then, that use that percentage to back-off from the "max" step value.
-        if (y != 0) {
+        if (y !== 0) {
             maxStep = 10;
         };
 
+        let intensity;
         // Should we scroll left?
         if (isInLeftEdge && canScrollLeft) {
 
-            var intensity = ((edgeLeft - viewportX) / edgeSize);
+            intensity = ((edgeLeft - viewportX) / edgeSize);
 
             nextScrollX = (nextScrollX - (maxStep * intensity));
 
             // Should we scroll right?
         } else if (isInRightEdge && canScrollRight) {
 
-            var intensity = ((viewportX - edgeRight) / edgeSize);
+            intensity = ((viewportX - edgeRight) / edgeSize);
 
             nextScrollX = (nextScrollX + (maxStep * intensity));
 

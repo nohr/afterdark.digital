@@ -19,6 +19,7 @@
     "react-scripts": "5.0.1",
     "react-tilt": "^0.1.4",
     "styled-components": "^5.3.5",
+    "uuid": "^9.0.0",
     "valtio": "^1.6.4",
     "web-vitals": "^2.1.4"
   },

@@ -5,10 +5,10 @@ import styled from 'styled-components';
 function Contact() {
     const [value, setValue] = useState('');
     function handleSubmit(e) {
-        console.log(e);
+        e.preventdefault();
     }
 
-    function handleChange(e) {
+    const handleChange = (e) => {
         setValue(e.target.value);
     }
 
