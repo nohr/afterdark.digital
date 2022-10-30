@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { auth, db, signInWithGoogle, storage } from '../utils/api';
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Timestamp } from 'firebase/firestore/lite';
-import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
 import { v4 } from 'uuid';
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import styled from 'styled-components';
@@ -19,35 +19,12 @@ function Login() {
     </ContentPage>);
 }
 
-// function Preview(name) {
-
-//     // useEffect(() => {
-//     //     if (blobs.length === 0) {
-//     //         setPreview(`Upload and click 'Add Image' to preview.`);
-//     //     } else {
-//     //         setPreview(thumbs.map(value => value));
-//     //     }
-//     // }, [thumbs]);
-
-//     useEffect(() => {
-//         listAll(imageListRef).then((response) => {
-//             console.log(response);
-//         });
-//         return () => {
-
-//         }
-//     }, []);
-
-//     return (<div className='slideshow'>{preview}</div>);
-// }
-
-
-
-function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUploaded }) {
+function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
     const snap = useSnapshot(state);
     const nameInput = useRef(null);
     const dataList = useRef(null);
     const fileInput = useRef(null);
+    const [saved, setSaved] = useState(false);
     const [date, setDate] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
@@ -127,9 +104,10 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUpl
                 getDownloadURL(snapshot.ref).then(url => {
                     setContent(prev => [...prev, url])
                 })
-                alert(`${file.name} uploaded`);
+                alert(`${file.name} saved`);
             });
         };
+        setSelectedFiles('');
 
         // Read and render file
         // if (selectedFiles !== []) {
@@ -171,10 +149,11 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUpl
     };
 
     async function handleDeletePost() {
-        setUploaded(true);
+        setSaved(true);
         clearSelectedName();
         await deleteDoc(doc(db, "projects", name));
     };
+
     async function uploadData() {
         // Add or Edit Firestore doc 
         await setDoc(doc(db, "projects", name), {
@@ -189,12 +168,15 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUpl
     function handleUploadPost() {
         if (name !== '') {
             uploadData();
-            setUploaded(true);
-            clearForm();
+            setSaved(true);
         }
     };
 
-    return <form onSubmit={(e) => e.preventDefault()} className="secondary">
+    const [really, setReally] = useState(false);
+    return <>{saved ? <div>
+        Changes Saved!
+        <button onClick={() => window.location.reload(false)}>Post Again</button>
+    </div > : <form onSubmit={(e) => e.preventDefault()} className="secondary">
         <div>
             Metadata
             <input ref={nameInput} value={name} onChange={e => setName(e.target.value)} list="names" type="text" placeholder='Name' required></input>
@@ -202,7 +184,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUpl
             <datalist id="names" ref={dataList}>
                 {IDs.map((name, index) => <option value={name} key={index} />)}
             </datalist>
-            <input value={date} onChange={({ target }) => { setDate(target.value); console.log(target.value); }} type="date"></input>
+            <input value={date} onChange={e => setDate(e.target.value)} type="date"></input>
             <input value={category} onChange={e => setCategory(e.target.value)} type="text" placeholder='Category' required></input>
             <textarea value={description} onChange={e => setDescription(e.target.value)} className='desc' type="text" placeholder='Description'></textarea>
             <input value={url} onChange={e => setURL(e.target.value)} type="text" placeholder='Project URL'></input>
@@ -223,12 +205,15 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setUpl
         <div className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}>
             <button onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>{IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
         </div>
-        {IDs.indexOf(name) !== -1 && <div className={`delete`}>
-            <button onClick={() => handleDeletePost()} type="button">Delete Post</button>
+        {IDs.indexOf(name) !== -1 && <div className={`${really ? "addContent" : "delete"}`}>
+            <button onClick={() => setReally(!really)} type="button">{really ? "Cancel" : "Delete Post"}</button>
+        </div>}
+        {really && <div className={`delete`}>
+            <button onClick={() => handleDeletePost()} type="button">Delete It</button>
         </div>}
     </form>
+    }</>
 }
-
 
 function Preview({ content, setContent, name, IDs }) {
     const [preview, setPreview] = useState(`Upload and click 'Add Image' to preview.`);
@@ -236,13 +221,19 @@ function Preview({ content, setContent, name, IDs }) {
     function handleDeleteContent(e) {
         // Remove Preview
         e.currentTarget.parentNode.remove();
-        // Delete from storage
-        // const fileToDeleteRef = ref(storage, `projects/${name} Media/`);
+        // delete the file from storage
+        let filename = e.currentTarget.previousSibling.src.split("%2F")[2].split("?")[0];
+        filename = filename.replace(/%20/g, " ").replace(/%2C/g, ",").replace(/%3A/g, ":").replace(/%3B/g, ";").replace(/%3D/g, "=").replace(/%3F/g, "?").replace(/%40/g, "@").replace(/%26/g, "&");
+        const fileToDeleteRef = ref(storage, `projects/${name} Media/${filename}`);
+        deleteObject(fileToDeleteRef);
+        // Remove from content array
+        setContent(prev => prev.filter(item => item !== filename));
     }
 
     // Set the preview content when the document matches
     useEffect(() => {
         if (IDs.indexOf(name) !== -1) {
+            setContent([]);
             // create URL 
             let imageListRef = ref(storage, `projects/${name} Media/`);
             listAll(imageListRef).then((response) => {
@@ -259,79 +250,50 @@ function Preview({ content, setContent, name, IDs }) {
         // }
     }, [name, IDs, setContent]);
 
+    // Set the preview when the content array changes
     useEffect(() => {
-        setPreview(
-            content.length > 0 ?
-                content.map((value, index) => {
-                    return <div key={index} className='previewimage'>
-                        <img alt={value} id={v4()} src={value} />
-                        <button onClick={handleDeleteContent}> Delete</button>
-                    </div>;
-                })
-                : `Upload and click 'Add Image' to preview.`);
+        // change the preview when the name changes
+        if (IDs.indexOf(name) !== -1) {
+            setPreview(content.map((item, index) => <div key={index} className='previewimage'>
+                <img src={item} alt={item} />
+                <button onClick={handleDeleteContent} type='button'>Delete</button>
+            </div>));
+        }
+    }, [content, name, IDs]);
+    useEffect(() => {
+        // when there is no content, show the default preview
+        if (content.length === 0) {
+            setPreview(`Upload and click 'Add Image' to preview.`);
+        }
+    }, [name, IDs]);
 
-    }, [content, name])
 
     return <div className='slideshow'>{preview}</div>
 }
 
 function Home() {
     const snap = useSnapshot(state);
-    // const nameInput = useRef(null);
-    // const dataList = useRef(null);
-    // const fileInput = useRef(null);
     const [content, setContent] = useState([]);
     const [IDs, setIDs] = useState([]);
     const [name, setName] = useState('');
-    // const [date, setDate] = useState('');
-    // const [category, setCategory] = useState('');
-    // const [description, setDescription] = useState('');
-    // const [url, setURL] = useState('');
-    // const [selectedFiles, setSelectedFiles] = useState('');
-    // const [isFilePicked, setIsFilePicked] = useState(false);
-    // const [TikTokID, setTikTokID] = useState('');
-    // // const [InstaID, setInstaID] = useState('');
-    const [uploaded, setUploaded] = useState(false);
-
 
     return (<ContentPage>
         <div className='homebar'>
             <h1>Editor</h1>
-            <button style={{ width: "150px", borderRadius: "0 0 0 5px" }} onClick={() => auth.signOut()}> Sign out </button>
+            <button style={{ width: "150px" }} onClick={() => auth.signOut()}> Sign out </button>
         </div>
-        {uploaded ? <div>
-            Changes Saved!
-            <button onClick={() => window.location.reload(false)}>Post Again</button>
-        </div> :
-            <div className='dash'>
-                <Form
-                    // nameInput={nameInput}
-                    // dataList={dataList}
-                    // fileInput={fileInput}
-                    IDs={IDs}
-                    setIDs={setIDs}
-                    name={name}
-                    setName={setName}
-                    // date={date}
-                    // setDate={setDate}
-                    // category={category}
-                    // setCategory={setCategory}
-                    // description={description}
-                    // setDescription={setDescription}
-                    // url={url}
-                    // setURL={setURL}
-                    // setSelectedFiles={setSelectedFiles}
-                    // isFilePicked={isFilePicked}
-                    // setIsFilePicked={setIsFilePicked}
-                    // TikTokID={TikTokID}
-                    // setTikTokID={setTikTokID}
-                    Preview={Preview}
-                    content={content}
-                    setContent={setContent}
-                    setUploaded={setUploaded}
-                />
-                {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} />}
-            </div>}
+        <div className='dash'>
+            <Form
+                IDs={IDs}
+                setIDs={setIDs}
+                name={name}
+                setName={setName}
+                Preview={Preview}
+                content={content}
+                setContent={setContent}
+            />
+            {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} />}
+        </div>
     </ContentPage>);
 }
 
@@ -357,7 +319,6 @@ export function Editor({ user, setUser }) {
 const ContentPage = styled.div`
     width: 100vw;
     height: 100%;
-    /* margin: auto 0; */
     display: flex;
     flex-direction: column;
     align-items: center;
