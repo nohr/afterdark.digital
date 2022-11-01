@@ -10,137 +10,34 @@ import { edgeSize, handleMousemove } from '../utils/scroll'
 
 function Project({ project }) {
     const snap = useSnapshot(state);
-
+    // position the image in the center of the card
+    const image = {
+        backgroundImage: `url(${project.cover})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        bacckgroundOpacity: "0.5",
+    }
     function Contents() {
         return <>
-            <img src={`${project.image}`} />
-            <div className='title'>{project.project_name}</div>
-            <div>{project.date}</div>
+            {/* <img src={project.cover} /> */}
+            <div className='title'>{project.name}</div>
+            {/* <div>{project.date}</div> */}
             <div>{project.description}</div>
         </>
     }
 
     if (snap.mobile) {
-        return (<Card to={`/${project.id}`}>
-            <Contents />
-        </Card>)
+        return (<Card to={`/${project.path}`} style={image}><Contents /></Card>)
     } else {
-        return (<Tilt
-            options={{ reset: true, easing: "cubic-bezier(0.03,0.98,0.52,0.99)", }}
-            style={{ height: '100%' }}
-        >
-            <Card to={`/${project.id}`}>
-                <Contents />
-            </Card>
-        </Tilt>)
+        return (<Tilt options={{ reset: true, easing: "cubic-bezier(0.03,0.98,0.52,0.99)", }}
+            style={{ height: '100%' }}>
+            <Card to={`/${project.path}`} style={image}><Contents /></Card></Tilt>)
     }
 }
 function Projects() {
     const snap = useSnapshot(state);
     const CardsScroll = useRef(null);
-    // let svg;
-    // useEffect(() => {
-    //     const { innerWidth, innerHeight } = window;
-    //     const w = snap.mobile ? (innerWidth * 2) : (innerWidth * 0.95);
-    //     const h = innerHeight * 0.95;
-    //     svg = select(".CardsScroll")
-    //         .append("svg")
-    //         .attr("height", "100%")
-    //         .attr("width", "100%");
-
-    //     const width = w - 20;
-    //     const height = h - 20;
-    //     const outerRadius = Math.min(width, height) / 2;
-    //     const g = svg
-    //         .append("g")
-    //         .attr("transform", snap.mobile ?
-    //             `translate(${(width / 2) / 2}, ${(height / 2)})` :
-    //             `translate(${10 + width / 2}, ${10 + height / 2})`)
-    //     const { sin, cos, PI } = Math;
-    //     const theta = 3 * (PI / 2);
-    //     const innerRadius = outerRadius - 300;
-
-    //     const pices = Array(snap.data.length).fill(1);
-    //     const poi = pie().value(d => d);
-    //     const pieData = poi(pices);
-
-    //     const getPath = d => {
-    //         const { startAngle, endAngle } = d
-    //         const x1 = innerRadius * cos(startAngle + theta)
-    //         const y1 = innerRadius * sin(startAngle + theta)
-    //         const x2 = innerRadius * cos(endAngle + theta)
-    //         const y2 = innerRadius * sin(endAngle + theta)
-    //         return `M${x2},${y2}A${innerRadius},${innerRadius}, 1, 0,0, ${x1}, ${y1}`
-    //     };
-
-    //     const commonColor = "var(--blue)";
-
-    //     pieData.forEach((item, index) => {
-    //         g.append("path")
-    //             .attr("id", `s${index}`)
-    //             .attr("d", getPath(item))
-    //             .attr("stroke", `${snap.data[index].project_name}`)
-    //             .style("stroke-width", "18px")
-    //             .attr("fill", "none")
-
-    //         g.append("text")
-    //             .attr("dy", 200)
-    //             .append("textPath")
-    //             .attr("xlink:href", `#s${index}`)
-    //             .text(`${snap.data[index].date}`)
-    //             .attr("fill", commonColor)
-    //             .style("text-anchor", "middle")
-    //             .style("font-size", "8px")
-    //             .attr("startOffset", "50%")
-
-    //         g.append("text")
-    //             .attr("dy", 35)
-    //             .append("textPath")
-    //             .attr("xlink:href", `#s${index}`)
-    //             .text(`${snap.data[index].description}`)
-    //             .attr("fill", commonColor)
-    //             .style("text-anchor", "middle")
-    //             .style("font-size", "8px")
-    //             .attr("startOffset", "50%")
-
-    //         g.append("text")
-    //             .attr("dy", 90)
-    //             .append("textPath")
-    //             .attr("xlink:href", `#s${index}`)
-    //             // .text(`${data[index].val}`)
-    //             .attr("fill", commonColor)
-    //             .style("text-anchor", "middle")
-    //             .style("font-size", "8px")
-    //             .attr("startOffset", "50%")
-
-    //         g.append("text")
-    //             .attr("dy", 60)
-    //             .append("textPath")
-    //             .attr("xlink:href", `#s${index}`)
-    //             // .text(`${data[index].icon}`)
-    //             .attr("fill", "#fff")
-    //             .style("text-anchor", "middle")
-    //             .style("font-size", "20px")
-    //             .attr("startOffset", "50%")
-    //     });
-
-    //     g.selectAll('whatever')
-    //         .data(pieData)
-    //         .enter()
-    //         .append('path')
-    //         .attr('d', arc()
-    //             .innerRadius(outerRadius - 109)
-    //             .outerRadius(outerRadius)
-    //         )
-    //         .attr('fill', 'none')
-    //         .attr("stroke", commonColor)
-    //         .style("stroke-width", "1px")
-    //         .style("opacity", 1);
-
-    //     return () => {
-    //         // select(".CardsScroll").remove();
-    //     }
-    // }, [])
 
     useEffect(() => {
         !snap.mobile && CardsScroll.current.addEventListener("mousemove", handleMousemove, false);
@@ -155,9 +52,8 @@ function Projects() {
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
         <CardWrapper>
-            {snap.data.map((project, key) => (
-                <Project project={project} key={key} />
-            ))}
+            {snap.data.map((project, key) =>
+                <Project project={project} key={key} />)}
         </CardWrapper>
         {/* Red Egdes */}
         {!snap.mobile && <span
@@ -170,7 +66,7 @@ function Projects() {
                 left: edgeSize + 80 + "px",
                 right: edgeSize + 81 + "px",
                 border: "1px solid",
-                borderColor: "#00000000 #f91a2a",
+                borderColor: "#00000000 #f00",
                 borderRadius: "5px 5px 5px 5px",
             }}
         ></span>}
@@ -187,7 +83,7 @@ const CardScroller = styled(motion.div)`
     display: block;
 `
 const CardWrapper = styled.div`
-    /* width: max-content; */
+    /* transform: skewX(4deg); */
     height: 100%;
     transition: 0.3s;
     display: flex;
@@ -220,7 +116,7 @@ const Card = styled(Link)`
         overflow: hidden;
         position: absolute;
         z-index: -10;
-        height: 100% !important;
+        /* height: 100% !important; */
         width: auto !important;
         opacity: 0.5;
     }
@@ -232,7 +128,6 @@ const Card = styled(Link)`
     &:hover{
         /* opacity: 0.75; */
         border: 1px solid var(--blue);
-
     }
 
     div{

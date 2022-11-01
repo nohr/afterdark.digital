@@ -19,6 +19,7 @@ function Contact() {
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
         <h2>Book with us!</h2>
+        <div className='footer'> <a href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a></div>
         <Form onSubmit={handleSubmit}>
             <label>
                 <p>First Name</p>

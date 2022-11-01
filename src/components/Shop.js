@@ -13,6 +13,11 @@ const ContentPage = styled.div`
     width: 100%;
     height: 100%;
     margin: auto 0;
+    
+    h1{
+        width: min-content;
+        margin: 0 auto;
+    }
 
     img{
         width: 100%;

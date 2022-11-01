@@ -2,20 +2,20 @@ import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { state } from '../utils/state';
 
-
-function Page({ content }) {
+function Page({ project }) {
     const contentRef = useRef(null);
     useEffect(() => {
         if (contentRef.current) {
-            contentRef.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, false);
+            contentRef.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: true });
         }
     });
     state.menu = false;
     return (<ContentPage ref={contentRef}>
-        <h1>{content.project_name}</h1>
-        <div>{content.date}</div>
-        <img src={`${content.image}`} />
-        <div>{content.description}</div>
+        <h1>{project.name}</h1>
+        <h1>{project.category}</h1>
+        {/* <div>{project.date}</div> */}
+        <img src={`${project.cover}`} />
+        <div>{project.description}</div>
     </ContentPage>
     );
 }
@@ -29,6 +29,6 @@ const ContentPage = styled.div`
     margin: auto 0;
 
     img{
-        width: 100%;
+        height: 250px;
     }
 `

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
+import { auth } from '../utils/api';
 import { state } from '../utils/state';
 import { HamburgerIcon, Logo } from '../utils/svg';
 import Contact from './Contact';
@@ -27,11 +28,13 @@ function Header({ header, user }) {
     return (<MetaNavWrapper ref={header}>
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
-                <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Book Us</a>
-                {user && <NavLink to={'/Editor'}>Editor</NavLink>}
+                <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Contact</a>
+                {user && <NavLink to={'/editor'}>Editor</NavLink>}
                 <Logo />
                 <NavLink to={'/shop'}>Shop</NavLink>
-                <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a>
+                {user && <a href='#' onClick={() => auth.signOut()} >Sign Out</a>}
+
+                {/* <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a> */}
             </div>}
             {snap.mobile && <div className='Links'>
                 <Logo />
@@ -41,8 +44,8 @@ function Header({ header, user }) {
         {(snap.menu) && <>
             {snap.mobile && <div>
                 <NavLink to={'/shop'}><h1>Shop</h1></NavLink>
-                {/* {user && <NavLink to={'/Editor'}><h1>Editor</h1></NavLink>} */}
-                <NavLink to={'/Editor'}><h1>Editor</h1></NavLink>
+                {/* {user && <NavLink to={'/editor'}><h1>Editor</h1></NavLink>} */}
+                <NavLink to={'/editor'}><h1>Editor</h1></NavLink>
             </div>}
             <Contact />
         </>}
@@ -115,8 +118,6 @@ const NavWrapper = styled.div`
          }
     }
 
-
-
     & .Links{
         height: auto;
         width: 100%;
@@ -124,12 +125,13 @@ const NavWrapper = styled.div`
         column-gap: 10px;
         justify-content: flex-start;
         font-weight: 700;
-        font-style: italic;
+        /* font-style: italic; */
         align-items: center;
     @media screen and (min-width: 768px) {
         justify-content: center;
     }
         & a.Logo{
+            cursor: pointer;
             overflow: visible !important;
             & svg{
              @media screen and (max-width: 768px) {

@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { auth, db, signInWithGoogle, storage } from '../utils/api';
+import { db, signInWithGoogle, storage } from '../utils/api';
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Timestamp } from 'firebase/firestore/lite';
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 } from 'uuid';
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import styled from 'styled-components';
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
+import { Navigate } from 'react-router';
 // import InstagramEmbed from 'react-instagram-embed';
 
 function Login() {
-    // firebaseui.auth
     return (<ContentPage>
         <h1>Editor</h1>
         <button style={{ width: "50%" }} onClick={signInWithGoogle}>
@@ -19,11 +18,12 @@ function Login() {
     </ContentPage>);
 }
 
-function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
+function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPath, cover, setCover }) {
     const snap = useSnapshot(state);
     const nameInput = useRef(null);
     const dataList = useRef(null);
     const fileInput = useRef(null);
+    const [categories, setCategories] = useState([]);
     const [saved, setSaved] = useState(false);
     const [date, setDate] = useState('');
     const [category, setCategory] = useState('');
@@ -33,6 +33,9 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [TikTokID, setTikTokID] = useState('');
     // const [InstaID, setInstaID] = useState('');
+    const [load, setLoad] = useState('');
+    let newContent = [];
+    let uploadTask = null;
 
     // Hide mobile keyboard on selection
     useEffect(() => { if (IDs.indexOf(name) !== -1) nameInput.current.blur(); }, [name, IDs, nameInput]);
@@ -42,8 +45,9 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
         (async () => {
             const data = await getDocs(collection(db, "projects"));
             setIDs(data.docs.map(doc => doc.id));
+            setCategories([...new Set(data.docs.map(doc => doc.data().category))]);
         })();
-    }, [setIDs]);
+    }, [setIDs, setCategories]);
 
     // Populate form with data from firestore when name matches
     useEffect(() => {
@@ -65,7 +69,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
             (async () => {
                 const docSnap = await getDoc(doc(db, "projects", name));
                 if (docSnap.exists()) {
-                    setDate(formatDate(docSnap.data().date.toDate()));
+                    docSnap.data().date && setDate(formatDate(docSnap.data().date.toDate()));
                     setDescription(docSnap.data().description);
                     setURL(docSnap.data().url);
                     setCategory(docSnap.data().category);
@@ -83,234 +87,276 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent }) {
         setDescription('');
         setDate('');
         setURL('');
+        setContent([]);
+        setPath('');
+        setSelectedFiles('');
+        setIsFilePicked(false);
+        setTikTokID('');
+        // setInstaID('');
     };
 
     function clearSelectedName() {
-        clearForm();
-        setContent([]);
-        let options = dataList.current.options;
+        if (nameInput.current) {
+            clearForm();
+            setContent([]);
+            let options = dataList.current.options;
 
-        for (var i = 0; i < options.length; i++) {
-            options[i].selected = false;
+            for (var i = 0; i < options.length; i++) {
+                options[i].selected = false;
+            }
         }
     };
 
     function handleAddContent() {
-        // upload photos to Firebase
-        if (selectedFiles === '') return;
+        // handle uploading multiple files with an ordered id
         for (let file of selectedFiles) {
-            let imageRef = ref(storage, `projects/${name} Media/${v4()}-${file.name}`);
-            uploadBytes(imageRef, file).then((snapshot) => {
-                getDownloadURL(snapshot.ref).then(url => {
-                    setContent(prev => [...prev, url])
-                })
-                alert(`${file.name} saved`);
+            // keep track of file upload progress
+            let progress = 0;
+            // create a unique id for the file
+            const id = v4();
+            // create a reference to the storage bucket location
+            const storageRef = ref(storage, `projects/${name} Media/${id}-${file.name}`);
+            // upload the file
+            uploadTask = uploadBytesResumable(storageRef, file);
+            uploadTask.on('state_changed', (snapshot) => {
+                // calculate the upload progress
+                progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                setLoad(`${progress}%`);
+            }, (error) => {
+                // catch errors
+                console.log(error);
+            }, () => {
+                // get the download url when complete
+                getDownloadURL(storageRef).then(downloadURL => {
+                    // add the file to the array of files with an ordered id
+                    newContent.push({ id, name: `${id}-${file.name}`, url: downloadURL, type: file.type.split('/')[0] });
+                    // add the new content to the content array
+                    setContent([...content, ...newContent]);
+                    // update the firestore document
+                    setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
+                    // reset the progress
+                    setLoad('');
+                    progress = 0;
+                });
             });
         };
-        setSelectedFiles('');
 
-        // Read and render file
-        // if (selectedFiles !== []) {
-        //     for (let file of selectedFiles) {
-        //         let reader = new FileReader();
-        //         reader.onload = () => {
-        //             file.id = v4();
-        //             if (file.type?.includes("image")) {
-        //                 let img = <img alt={file.name} id={file.id} onClick={handleDeleteContent} className='previewimage' key={Math.random()} src={URL.createObjectURL(file)} />;
-        //                 setThumbs(prev => [...prev, img]);
-        //             }
-        //             if (file.type?.includes("video")) {
-        //                 let video = <video autoPlay muted loop id={file.id} onClick={handleDeleteContent} className='previewimage' key={Math.random()} src={URL.createObjectURL(file)}></video>;
-        //                 setThumbs(prev => [...prev, video]);
-        //             }
-        //             setBlobs(prev => [...prev, file]);
-        //         };
-        //         reader.readAsDataURL(file);
-        //     };
-        //     fileInput.current.value = '';
-        //     setIsFilePicked(false);
-        // }
+        // handle adding TikTok embed
+        if (TikTokID !== '') {
+            newContent.push({ id: v4(), url: TikTokID, type: 'tiktok' });
+            // append the new content to the state  
+            setContent([...content, ...newContent]);
+            // update the firestore document
+            setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
+            setTikTokID('');
+        }
 
-        // TODO: Fix Instagram API token?
+        // handle adding Instagram embed
         // if (InstaID !== '') {
-        //     setThumbs(prev => [...prev, <InstagramEmbed clientAccessToken='511621404189406|34f272ef8ab7e9a37748b5b3054b61ea'
-        //         key={Math.random()} url={string} maxWidth={500} hideCaption={false} containerTagName="div" injectScript />]);
-        //     setBlobs(prev => [...prev, InstaID]);
+        //     newContent.push({ id: v4(), url: InstaID, type: 'instagram' });
+        //     // append the new content to the state
+        //     setContent([...content, ...newContent]);
         //     setInstaID('');
         // }
 
-        // Handle TikTok embeds
-        // if (TikTokID !== '') {
-        //     setThumbs(prev => [...prev, <iframe src={`https://www.tiktok.com/embed/${TikTokID}`} title={TikTokID} key={Math.random()} allow-scripts="true"
-        //         sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe>]);
-        //     setBlobs(prev => [...prev, TikTokID]);
-        //     setTikTokID('');
-        // }
+        setIsFilePicked(false);
+        fileInput.current.value = '';
+        newContent = [];
     };
 
     async function handleDeletePost() {
         setSaved(true);
         clearSelectedName();
         await deleteDoc(doc(db, "projects", name));
+        // delete firebase storage folder
+        // await deleteObject(ref(storage, `projects/${name} Media`));
+        let storageRef = ref(storage, `projects/${name} Media`);
+        listAll(storageRef).then((res) => {
+            res.items.forEach((itemRef) => {
+                deleteObject(itemRef);
+            });
+        });
+
     };
 
     async function uploadData() {
+        // generate a pathname for the project
+        let path = name.toLowerCase().replace(/ /g, '-');
+        let timestamp = Timestamp.fromMillis(new Date(date.split("-")[0], date.split("-")[1] - 1, date.split("-")[2]).getTime());
         // Add or Edit Firestore doc 
         await setDoc(doc(db, "projects", name), {
+            path: path,
             name: name,
-            date: Timestamp.fromMillis(new Date(date.split("-")[0], date.split("-")[1] - 1, date.split("-")[2]).getTime()),
+            date: timestamp,
             category: category,
             description: description,
-            url: url
-        });
-    };
+            url: url,
+            cover: cover,
+            content: content
+        }, { merge: true });
+    }
 
     function handleUploadPost() {
-        if (name !== '') {
+        if (name !== '', category !== '', date !== '') {
             uploadData();
+            setContent([]);
             setSaved(true);
         }
     };
 
-    const [really, setReally] = useState(false);
-    return <>{saved ? <div>
-        Changes Saved!
+    const [confirm, setConfirm] = useState(false);
+    return <div className='formWrap'>{saved ? <>
+        <p>Changes Saved!</p>
         <button onClick={() => window.location.reload(false)}>Post Again</button>
-    </div > : <form onSubmit={(e) => e.preventDefault()} className="secondary">
-        <div>
+    </ > : <form onSubmit={(e) => e.preventDefault()} className="secondary">
+        <div className='section'>
             Metadata
             <input ref={nameInput} value={name} onChange={e => setName(e.target.value)} list="names" type="text" placeholder='Name' required></input>
             <button type='button' onClick={clearSelectedName}>Clear</button>
             <datalist id="names" ref={dataList}>
                 {IDs.map((name, index) => <option value={name} key={index} />)}
             </datalist>
-            <input value={date} onChange={e => setDate(e.target.value)} type="date"></input>
-            <input value={category} onChange={e => setCategory(e.target.value)} type="text" placeholder='Category' required></input>
+            <input value={date} onChange={e => setDate(e.target.value)} type="date" required></input>
+            {/* TODO: Add datalist for saved categories */}
+            <input value={category} onChange={e => setCategory(e.target.value)} list="categories" type="text" placeholder='Category' required></input>
+            <datalist id="categories" ref={dataList}>
+                {categories.map((category, index) => <option value={category} key={index} />)}
+            </datalist>
             <textarea value={description} onChange={e => setDescription(e.target.value)} className='desc' type="text" placeholder='Description'></textarea>
             <input value={url} onChange={e => setURL(e.target.value)} type="text" placeholder='Project URL'></input>
-        </div>
-        <div>
+        </div >
+        <div className='section third'>
             Images
-            {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} />}
+            {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
             <input onChange={e => {
                 e.target.files.length > 0 ? setIsFilePicked(true) : setIsFilePicked(false);
                 setSelectedFiles(e.target.files);
             }} multiple type="file" ref={fileInput}></input>
             {/* <input value={InstaID} onChange={e => setInstaID(e.target.value)} type="text" placeholder='Instagram URL'></input> */}
-            <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID' ></input>
-            <div className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`}>
-                <button type='button' onClick={handleAddContent}>Add Content</button>
+            <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
+            <div className='addContentWrap'>
+                <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={handleAddContent}>Add Content</button>
+                {/* {load !== '' && <button onClick={() => uploadTask.cancel()} className='addContent delete' type='button'>Stop</button>} */}
+                {load !== '' && <p>{load} uploaded</p>}
             </div>
         </div>
-        <div className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}>
-            <button onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>{IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
-        </div>
-        {IDs.indexOf(name) !== -1 && <div className={`${really ? "addContent" : "delete"}`}>
-            <button onClick={() => setReally(!really)} type="button">{really ? "Cancel" : "Delete Post"}</button>
-        </div>}
-        {really && <div className={`delete`}>
-            <button onClick={() => handleDeletePost()} type="button">Delete It</button>
-        </div>}
+        <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
+            onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>
+            {IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
+        {IDs.indexOf(name) !== -1 && <button className={`${confirm ? "submit" : "delete"}`} onClick={() => setConfirm(!confirm)} type="button">{confirm ? "Cancel" : "Delete Post"}</button>}
+        {confirm && <button className={`delete`} onClick={() => handleDeletePost()} type="button">Confirm</button>}
     </form>
-    }</>
+    }</div>
 }
 
-function Preview({ content, setContent, name, IDs }) {
+function Preview({ content, setContent, name, IDs, setPath, setCover }) {
     const [preview, setPreview] = useState(`Upload and click 'Add Image' to preview.`);
-
-    function handleDeleteContent(e) {
-        // Remove Preview
-        e.currentTarget.parentNode.remove();
-        // delete the file from storage
-        let filename = e.currentTarget.previousSibling.src.split("%2F")[2].split("?")[0];
-        filename = filename.replace(/%20/g, " ").replace(/%2C/g, ",").replace(/%3A/g, ":").replace(/%3B/g, ";").replace(/%3D/g, "=").replace(/%3F/g, "?").replace(/%40/g, "@").replace(/%26/g, "&");
-        const fileToDeleteRef = ref(storage, `projects/${name} Media/${filename}`);
-        deleteObject(fileToDeleteRef);
-        // Remove from content array
-        setContent(prev => prev.filter(item => item !== filename));
-    }
-
-    // Set the preview content when the document matches
+    // set the cover image when the content changes
     useEffect(() => {
+        if (content.length > 0) {
+            // go through the content array and stop and set the first image or video
+            for (let i = 0; i < content.length; i++) {
+                if (content[i].type === "image") {
+                    setCover(content[i].url);
+                    break;
+                }
+            }
+        } else { setCover(''); }
+    }, [content]);
+
+    // Set the preview content when the document matches from the database
+    useEffect(() => {
+        // Set the content to the data from the database if the name matches an ID
         if (IDs.indexOf(name) !== -1) {
-            setContent([]);
-            // create URL 
-            let imageListRef = ref(storage, `projects/${name} Media/`);
-            listAll(imageListRef).then((response) => {
-                response.items.forEach((item) => {
-                    getDownloadURL(item).then((url) => {
-                        setContent(prev => [...prev, url]);
-                    })
-                })
+            // get the data from the database
+            getDoc(doc(db, "projects", name)).then((doc) => {
+                if (doc.exists()) {
+                    //  get the path from firestore
+                    let path = doc.data().path;
+                    // change the current route to the path
+                    setPath(path);
+                    // set the content to the data from the database
+                    setContent(doc.data().content);
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
             });
         }
-
-        // return () => {
-        //     setContent([]);
-        // }
     }, [name, IDs, setContent]);
 
     // Set the preview when the content array changes
     useEffect(() => {
+        function handleDeleteContent(item) {
+            // remove the file from storage if its a image or video
+            if (item.type === 'image' || item.type === 'video') {
+                deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
+            }
+            // remove the item from the content array
+            setContent(content.filter(i => i !== item));
+            // update the firestore doc
+            setDoc(doc(db, "projects", name), {
+                content: content.filter(i => i !== item)
+            }, { merge: true });
+        };
+
         // change the preview when the name changes
-        if (IDs.indexOf(name) !== -1) {
-            setPreview(content.map((item, index) => <div key={index} className='previewimage'>
-                <img src={item} alt={item} />
-                <button onClick={handleDeleteContent} type='button'>Delete</button>
-            </div>));
-        }
+        setPreview(content.map((item, index) => {
+            const element = item.type === 'image' ? <img src={item.url} alt={item.name} key={index} /> :
+                item.type === 'video' ? <video src={item.url} alt={item.name} key={index} controls></video> :
+                    item.type === 'tiktok' ? <iframe src={`https://www.tiktok.com/embed/${item.url}`} title={item.url} key={Math.random()} allow-scripts="true"
+                        sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
+                        <p>{item.type} type not supported</p>;
+
+            return <div className='previewimage' key={index}> {element}
+                <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item, index)} type='button'>Delete {item.type}</button>
+            </div>
+        }));
     }, [content, name, IDs]);
+
+    // when there is no content, show the default preview
     useEffect(() => {
-        // when there is no content, show the default preview
         if (content.length === 0) {
             setPreview(`Upload and click 'Add Image' to preview.`);
         }
-    }, [name, IDs]);
 
+    }, [name, IDs, content]);
 
     return <div className='slideshow'>{preview}</div>
 }
 
-function Home() {
+export function Editor({ user }) {
     const snap = useSnapshot(state);
-    const [content, setContent] = useState([]);
+    const [path, setPath] = useState('');
     const [IDs, setIDs] = useState([]);
     const [name, setName] = useState('');
-
-    return (<ContentPage>
-        <div className='homebar'>
-            <h1>Editor</h1>
-            <button style={{ width: "150px" }} onClick={() => auth.signOut()}> Sign out </button>
-        </div>
-        <div className='dash'>
-            <Form
-                IDs={IDs}
-                setIDs={setIDs}
-                name={name}
-                setName={setName}
-                Preview={Preview}
-                content={content}
-                setContent={setContent}
-            />
-            {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} />}
-        </div>
-    </ContentPage>);
-}
-
-export function Editor({ user, setUser }) {
-    const auth = getAuth();
-    useEffect(() => {
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(false);
-            }
-        })
-    }, [auth, setUser])
+    const [cover, setCover] = useState('');
+    const [content, setContent] = useState([]);
 
     if (user) {
-        return <Home />
+        return <ContentPage>
+            <div className='homebar'>
+                <h1>Editor</h1>
+            </div>
+            <div className='dash'>
+                <Form
+                    IDs={IDs}
+                    setIDs={setIDs}
+                    name={name}
+                    setName={setName}
+                    Preview={Preview}
+                    content={content}
+                    cover={cover}
+                    setCover={setCover}
+                    setContent={setContent}
+                    setPath={setPath}
+                />
+                {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
+            </div>
+            {/* {path !== '' && <Navigate to={`/editor/${path}`} />} */}
+        </ContentPage>
     } else {
         return <Login />
     }
@@ -324,49 +370,75 @@ const ContentPage = styled.div`
     align-items: center;
     color: var(--black )!important;
     justify-content: flex-start;
+    overflow-y: scroll;
 
     .homebar{
         width: 100%;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
     }
     .dash{
-        padding-top: 10px;
         display: flex;
         flex-direction: row;
         height: 100%;
         width: 100%;
         
         @media screen and (max-width: 768px) {
-            overflow-y: scroll;
+            /* overflow-y: scroll; */
             flex-direction: column;
+            padding: 10px;
         }
+    }
+    .formWrap{
+        @media screen and (max-width: 768px) {
+            width: 100%;
+        }
+        @media screen and (min-width: 768px) {
+            resize: horizontal;
+            overflow-y: scroll;
+            padding: 20px 0 20px 20px;
+            /* width: 50% !important; */
+        }
+
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-start;
+        row-gap: 20px;
+        background-color: var(--bluealpha);
     }
     form{
         @media screen and (max-width: 768px) {
             justify-content: space-evenly;
             overflow-y: unset;
-            width: 100%;
         }
 
         @media screen and (min-width: 768px) {
-            resize: horizontal;
             justify-content: flex-start;
-            overflow-y: scroll;
-            width: 33vw;
+            padding: 15px;
         }
-
-        padding: 20px;
+        width: 100%;
+        height: min-content;
         display: flex;
         flex-direction: column !important;
         row-gap: 20px;
-        margin-bottom: 40px;
 
-        div{
+        .section{
             row-gap: 20px;
             display: flex;
             flex-direction: column;
+        }
+         .third{
+            padding: 10px;
+         }
+        .addContentWrap{
+            column-gap: 30px;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
         }
     }
     input,textarea{
@@ -406,17 +478,23 @@ const ContentPage = styled.div`
         color: var(--offwhite);
         border: none;
         border-radius: 0;
+        border: 1px solid var(--blue);
         background-color: var(--blue) !important;
 
             &:hover{
                 opacity: 50%;
+                background-color: var(--bluealpha) !important;
             }
     }
+
     .disabled{
-        opacity: 50%;
         border: 1px solid var(--grey) !important;
-        button{
-            background-color: var(--grey) !important;
+        background-color: var(--greyalpha) !important;
+        color: var(--grey) !important;
+        
+        &:hover{
+            opacity: 100% !important;
+            background-color: var(--greyalpha) !important;
         }
     }
     .addContent{
@@ -428,25 +506,24 @@ const ContentPage = styled.div`
 
     .submit{
         width: 100%;
-        button{
-            width: 100%;
-        }
     }
 
     .submit, .addContent, .delete{
         align-self: flex-start;
         align-items: center;
-        padding: 0 !important;
+        /* padding: 0 !important; */
         row-gap: 0;
         border: 1px solid var(--blue);
         /* border-radius: 5px; */
     }
 
     .delete{
-        border-color: #dd4444 !important;
-        button{
-            background-color: #dd4444 !important;
-        }
+            background-color: var(--red) !important;
+            border: 1px solid var(--red) !important;
+
+            &:hover{
+                background-color:var(--redalpha) !important;
+            }
     }
     
     .slideshow{
