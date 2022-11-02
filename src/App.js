@@ -2,7 +2,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import Header from "./components/Header";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import Page from "./components/Page";
 import { useSnapshot } from "valtio";
 import { state } from "./utils/state";
 import { Editor } from "./components/Editor";
@@ -10,13 +9,12 @@ import { Shop } from "./components/Shop";
 import Projects from "./components/Projects";
 import styled from "styled-components";
 import { collection, getDocs, orderBy, where } from "firebase/firestore/lite";
-import { onSnapshot, query } from "firebase/firestore";
+import { query } from "firebase/firestore";
 import { db } from "./utils/api";
 
 function App() {
   const snap = useSnapshot(state);
   const header = useRef(null);
-  const footer = useRef(null);
   const [user, setUser] = useState(null);
   const [padding, setPadding] = useState({ header: 0 });
   const auth = getAuth();
@@ -78,7 +76,7 @@ function App() {
           <Route path="/shop" element={<Shop />} />
           <Route path="/editor" element={<Editor user={user} setUser={setUser} />} />
           {snap.data.map((value, index) => <Fragment key={index}>
-            <Route path={`/${value.path}`} element={<Page project={value} />} />
+            <Route path={`/${value.path}`} element={<Projects project={value} />} />
             {/* <Route path={`editor/${value.path}`} element={<Editor user={user} setUser={setUser} />} /> */}
           </Fragment>)}
         </Routes>

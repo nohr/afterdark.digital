@@ -257,6 +257,10 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
             // go through the content array and stop and set the first image or video
             for (let i = 0; i < content.length; i++) {
                 if (content[i].type === "image") {
+                    // generate a thumbnail from the image
+                    // let thumb = content[i].name.split('.');
+                    // thumb[thumb.length - 2] += '_thumb';
+                    // thumb = thumb.join('.');
                     setCover(content[i].url);
                     break;
                 }
@@ -271,14 +275,9 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
             // get the data from the database
             getDoc(doc(db, "projects", name)).then((doc) => {
                 if (doc.exists()) {
-                    //  get the path from firestore
-                    let path = doc.data().path;
-                    // change the current route to the path
-                    setPath(path);
-                    // set the content to the data from the database
+                    setPath(doc.data().path);
                     setContent(doc.data().content);
                 } else {
-                    // doc.data() will be undefined in this case
                     console.log("No such document!");
                 }
             }).catch((error) => {
@@ -397,8 +396,8 @@ const ContentPage = styled.div`
         @media screen and (min-width: 768px) {
             resize: horizontal;
             overflow-y: scroll;
-            padding: 20px 0 20px 20px;
-            /* width: 50% !important; */
+            padding: 15px 0 15px 15px;
+            width: 50vw !important;
         }
 
         display: flex;

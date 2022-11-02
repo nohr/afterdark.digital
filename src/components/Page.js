@@ -14,6 +14,7 @@ function Page({ project }) {
         <h1>{project.name}</h1>
         <h1>{project.category}</h1>
         {/* <div>{project.date}</div> */}
+        <a href={project.url} target='_blank' rel='noreferrer'>Link</a>
         <img src={`${project.cover}`} />
         <div>{project.description}</div>
     </ContentPage>

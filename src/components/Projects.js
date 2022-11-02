@@ -19,12 +19,11 @@ function Project({ project }) {
         bacckgroundOpacity: "0.5",
     }
     function Contents() {
-        return <>
-            {/* <img src={project.cover} /> */}
+        return <div className='metadata'>
             <div className='title'>{project.name}</div>
             {/* <div>{project.date}</div> */}
             <div>{project.description}</div>
-        </>
+        </div>
     }
 
     if (snap.mobile) {
@@ -35,7 +34,8 @@ function Project({ project }) {
             <Card to={`/${project.path}`} style={image}><Contents /></Card></Tilt>)
     }
 }
-function Projects() {
+
+function Projects({ project }) {
     const snap = useSnapshot(state);
     const CardsScroll = useRef(null);
 
@@ -50,10 +50,24 @@ function Projects() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ ease: "easeIn", duration: 0.23 }}
-    >
-        <CardWrapper>
-            {snap.data.map((project, key) =>
-                <Project project={project} key={key} />)}
+    ><CardWrapper>
+            {project ?
+                project.content.map((item, key) => {
+                    // check if the content is an image
+                    const element = item.type === 'image' ? <img src={item.url} alt={item.name} key={key} /> :
+                        item.type === 'video' ? <video src={item.url} alt={item.name} key={key} controls></video> :
+                            item.type === 'tiktok' ? <iframe src={`https://www.tiktok.com/embed/${item.url}`} title={item.url} key={Math.random()} allow-scripts="true"
+                                sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
+                                <p>{item.type} type not supported</p>;
+
+                    return <Item key={key}>
+                        {element}
+                        {/* <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item, key)} type='button'>Delete {item.type}</button> */}
+                    </Item>
+                })
+                :
+                snap.data.map((project, key) =>
+                    <Project project={project} key={key} />)}
         </CardWrapper>
         {/* Red Egdes */}
         {!snap.mobile && <span
@@ -84,26 +98,28 @@ const CardScroller = styled(motion.div)`
 `
 const CardWrapper = styled.div`
     /* transform: skewX(4deg); */
-    height: 100%;
+    height: 80%;
     transition: 0.3s;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     /* column-gap: 10px; */
-    padding: 100px 0;
+    /* padding-top: 30px; */
+    padding: 30px ;
+    margin: auto 0; ;
     width: fit-content;
 
     @media screen and (max-width: 768px) {
-        padding: 0;
+        /* padding: 0; */
         align-items: center;
     }
 `
 const Card = styled(Link)`
     position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1.5fr 0.25fr 0.25fr 1fr ;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     width: 85vw;
     height: 100%;
     background-color: transparent;
@@ -112,6 +128,11 @@ const Card = styled(Link)`
     /* color: var(--offwhite); */
     overflow: hidden;
     text-decoration: none;
+
+    .metadata{
+        background-color: var(--blue);
+        padding: 10px 0;
+    }
     img{
         overflow: hidden;
         position: absolute;
@@ -143,3 +164,20 @@ const Card = styled(Link)`
     }
     /* transform: perspective(500px);  */
 `
+const Item = styled.div`
+    position: relative;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    width: 100%;
+    height: 100%;
+
+    iframe{
+            height: 100%;
+            border: none;
+        }
+    img{
+        height: 100%;
+    }
+    `
