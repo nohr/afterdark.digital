@@ -97,7 +97,7 @@ const ContentWrapper = styled.div`
     display: flex;
     /* position: fixed; */
     flex-direction: column;
-    overflow: hidden;
+    /* overflow-x: hidden; */
     /* margin: 0 20px; */
 
     .footer {

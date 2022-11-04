@@ -142,3 +142,7 @@ a.footer {
   opacity: 0.5;
   transition: 0.3s;
 }
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}

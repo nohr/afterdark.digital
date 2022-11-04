@@ -40,7 +40,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
     // Hide mobile keyboard on selection
     useEffect(() => { if (IDs.indexOf(name) !== -1) nameInput.current.blur(); }, [name, IDs, nameInput]);
 
-    // Get and List document id's in datalist
+    // Get and List document id and categories in datalist
     useEffect(() => {
         (async () => {
             const data = await getDocs(collection(db, "projects"));
@@ -204,6 +204,10 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
         }
     };
 
+
+    // a function that resizes the div on drag
+
+
     const [confirm, setConfirm] = useState(false);
     return <div className='formWrap'>{saved ? <>
         <p>Changes Saved!</p>
@@ -258,10 +262,13 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
             for (let i = 0; i < content.length; i++) {
                 if (content[i].type === "image") {
                     // generate a thumbnail from the image
-                    // let thumb = content[i].name.split('.');
-                    // thumb[thumb.length - 2] += '_thumb';
-                    // thumb = thumb.join('.');
-                    setCover(content[i].url);
+                    let thumb = content[i].name.split('.');
+                    thumb[thumb.length - 2] += '_1080x1080';
+                    thumb = thumb.join('.');
+                    console.log(thumb);
+                    console.log(thumb);
+                    setPreview(thumb);
+                    // setCover((content[i].url));
                     break;
                 }
             }
@@ -397,7 +404,7 @@ const ContentPage = styled.div`
             resize: horizontal;
             overflow-y: scroll;
             padding: 15px 0 15px 15px;
-            width: 50vw !important;
+            /* width: 50vw !important; */
         }
 
         display: flex;
@@ -416,8 +423,9 @@ const ContentPage = styled.div`
         @media screen and (min-width: 768px) {
             justify-content: flex-start;
             padding: 15px;
+            width: 100%;
         }
-        width: 100%;
+        /* width: 100%; */
         height: min-content;
         display: flex;
         flex-direction: column !important;
