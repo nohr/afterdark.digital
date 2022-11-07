@@ -1,31 +1,32 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
 import { auth } from '../utils/api';
 import { state } from '../utils/state';
-import { HamburgerIcon, Logo } from '../utils/svg';
 import Contact from './Contact';
+import { HamburgerIcon, Logo } from '../utils/svg';
 
 function Header({ header, user }) {
     const navWrap = useRef(null);
     const snap = useSnapshot(state);
     let location = useLocation();
+    const [filter, setFilter] = useState(true);
 
     useEffect(() => {
-        if (navWrap.current) {
-            navWrap.current.addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: true });
-        }
+        if (navWrap.current) navWrap.current.addEventListener("touchmove", (e) => e.preventDefault(), { passive: true })
     });
 
+    useEffect(() => { return () => state.menu = false }, [location]);
+
     useEffect(() => {
-        return () => {
-            state.menu = false;
-        }
-    }, [location])
+        if (location.pathname === "/" || location.pathname.includes("projects")) setFilter(true)
+        else setFilter(false);
 
+        if (snap.menu) setFilter(false);
+    }, [location.pathname, snap.menu]);
 
-    return (<MetaNavWrapper ref={header}>
+    return (<> <MetaNavWrapper ref={header}>
         <NavWrapper ref={navWrap}>
             {!snap.mobile && <div className='Links'>
                 <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Contact</a>
@@ -33,8 +34,6 @@ function Header({ header, user }) {
                 <Logo />
                 <NavLink to={'/shop'}>Shop</NavLink>
                 {user && <a href='#' onClick={() => auth.signOut()} >Sign Out</a>}
-
-                {/* <a href='mailto:hello@afterdark.digital' className='footer caption'>hello@afterdark.digital</a> */}
             </div>}
             {snap.mobile && <div className='Links'>
                 <Logo />
@@ -49,7 +48,19 @@ function Header({ header, user }) {
             </div>}
             <Contact />
         </>}
-    </MetaNavWrapper>)
+    </MetaNavWrapper>
+        {filter &&
+            <CategoryWrapper top={header.current ? `${header.current.clientHeight}px` : `-40px`}>
+                {snap.categories.map((category, i) => {
+                    let active = location.pathname === `/projects/${category.toLowerCase()}`;
+                    // console.log(path);
+                    return <NavLink className={active ? "active" : ""} key={i} to={`/projects/${category.toLowerCase()}`}>
+                        {category}
+                    </NavLink>
+                })}
+            </CategoryWrapper>}
+    </>
+    )
 }
 
 export default Header
@@ -61,11 +72,10 @@ const MetaNavWrapper = styled.div`
     z-index: 4000;
     top: 0;
     /* left: 0; */
-    background-color: var(--blue);
     display: flex;
     flex-direction: column;
     color: var(--offwhite) !important;
-    border-bottom: 1px solid var(--blue);
+    /* border-bottom: 1px solid var(--blue); */
     
     & *{
         transition: 0.3s !important;
@@ -99,23 +109,18 @@ const NavWrapper = styled.div`
     width: 100%;
     height: min-content;
     justify-content: center;
-    /* padding-bottom: 10px; */
-    /* padding: 20px !important; */
-    /* transform:skewY(10deg) !important; */
+    background-color: var(--blue);
     
     @media screen and (max-width: 768px) {
         flex-direction: column;
         width: 100vw;
-
          & .Links{
             justify-content: space-between !important;
-            /* column-gap: 20px !important; */
-
             & *{
                 padding: 5px 10px;
                 font-size: 2em !important;
             }
-         }
+        }
     }
 
     & .Links{
@@ -190,6 +195,38 @@ const NavWrapper = styled.div`
 
     & *{
         text-decoration: none;
+    }
+`
+const CategoryWrapper = styled.div`
+    position: fixed;
+    z-index: 4000;
+    top: ${props => props.top};
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+    margin: 10px 0;
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    column-gap: 30px;
+
+    a {
+        color: var(--contrast);
+        cursor: pointer;
+        border: 1px solid var(--contrast);
+        padding: 10px 20px;
+        background-color: var(--bgSecondary);
+
+        &:hover, .active {
+            color: var(--bgSecondary) !important;
+            background-color: var(--contrast);
+        }
     }
 `
 export const SvgLogo = styled(NavLink)`

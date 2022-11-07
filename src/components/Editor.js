@@ -194,7 +194,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
             cover: cover,
             content: content
         }, { merge: true });
-    }
+    };
 
     function handleUploadPost() {
         if (name !== '', category !== '', date !== '') {
@@ -204,52 +204,72 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
         }
     };
 
-
     // a function that resizes the div on drag
+    // function resizeDiv(e) {
+    //     let div = document.getElementById('resize');
 
+    //     // get the mouse position
+    //     let mouseX = e.clientX;
+    //     let mouseY = e.clientY;
+
+    //     // get the div position
+    //     let divX = div.offsetLeft;
+    //     let divY = div.offsetTop;
+
+    //     // get the div size
+    //     let divWidth = div.offsetWidth;
+    //     let divHeight = div.offsetHeight;
+
+    //     // calculate the new div size
+    //     let newWidth = divWidth + (mouseX - divX);
+    //     let newHeight = divHeight + (mouseY - divY);
+
+    //     // set the new div size
+    //     div.style.width = newWidth + 'px';
+    //     div.style.height = newHeight + 'px';
+    // };
 
     const [confirm, setConfirm] = useState(false);
-    return <div className='formWrap'>{saved ? <>
-        <p>Changes Saved!</p>
-        <button onClick={() => window.location.reload(false)}>Post Again</button>
-    </ > : <form onSubmit={(e) => e.preventDefault()} className="secondary">
-        <div className='section'>
-            Metadata
-            <input ref={nameInput} value={name} onChange={e => setName(e.target.value)} list="names" type="text" placeholder='Name' required></input>
-            <button type='button' onClick={clearSelectedName}>Clear</button>
-            <datalist id="names" ref={dataList}>
-                {IDs.map((name, index) => <option value={name} key={index} />)}
-            </datalist>
-            <input value={date} onChange={e => setDate(e.target.value)} type="date" required></input>
-            {/* TODO: Add datalist for saved categories */}
-            <input value={category} onChange={e => setCategory(e.target.value)} list="categories" type="text" placeholder='Category' required></input>
-            <datalist id="categories" ref={dataList}>
-                {categories.map((category, index) => <option value={category} key={index} />)}
-            </datalist>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} className='desc' type="text" placeholder='Description'></textarea>
-            <input value={url} onChange={e => setURL(e.target.value)} type="text" placeholder='Project URL'></input>
-        </div >
-        <div className='section third'>
-            Images
-            {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
-            <input onChange={e => {
-                e.target.files.length > 0 ? setIsFilePicked(true) : setIsFilePicked(false);
-                setSelectedFiles(e.target.files);
-            }} multiple type="file" ref={fileInput}></input>
-            {/* <input value={InstaID} onChange={e => setInstaID(e.target.value)} type="text" placeholder='Instagram URL'></input> */}
-            <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
-            <div className='addContentWrap'>
-                <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={handleAddContent}>Add Content</button>
-                {/* {load !== '' && <button onClick={() => uploadTask.cancel()} className='addContent delete' type='button'>Stop</button>} */}
-                {load !== '' && <p>{load} uploaded</p>}
-            </div>
-        </div>
-        <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
-            onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>
-            {IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
-        {IDs.indexOf(name) !== -1 && <button className={`${confirm ? "submit" : "delete"}`} onClick={() => setConfirm(!confirm)} type="button">{confirm ? "Cancel" : "Delete Post"}</button>}
-        {confirm && <button className={`delete`} onClick={() => handleDeletePost()} type="button">Confirm</button>}
-    </form>
+    return <div className='formWrap'>{saved ? <> <p>Changes Saved!</p>
+        <button onClick={() => window.location.reload(false)}>Post Again</button></ >
+        : <form onSubmit={(e) => e.preventDefault()} className="secondary">
+            <div className='section'>
+                Metadata
+                <input ref={nameInput} value={name} onChange={e => setName(e.target.value)} list="names" type="text" placeholder='Name' required></input>
+                <button type='button' onClick={clearSelectedName}>Clear</button>
+                <datalist id="names" ref={dataList}>
+                    {IDs.map((name, index) => <option value={name} key={index} />)}
+                </datalist>
+                <input value={date} onChange={e => setDate(e.target.value)} type="date" required></input>
+                {/* TODO: Add datalist for saved categories */}
+                <input value={category} onChange={e => setCategory(e.target.value)} list="categories" type="text" placeholder='Category' required></input>
+                <datalist id="categories" ref={dataList}>
+                    {categories.map((category, index) => <option value={category} key={index} />)}
+                </datalist>
+                <textarea value={description} onChange={e => setDescription(e.target.value)} className='desc' type="text" placeholder='Description'></textarea>
+                <input value={url} onChange={e => setURL(e.target.value)} type="text" placeholder='Project URL'></input>
+            </div >
+            <div className='section third'>
+                Images
+                {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
+                <input onChange={e => {
+                    e.target.files.length > 0 ? setIsFilePicked(true) : setIsFilePicked(false);
+                    setSelectedFiles(e.target.files);
+                }} multiple type="file" ref={fileInput}></input>
+                {/* <input value={InstaID} onChange={e => setInstaID(e.target.value)} type="text" placeholder='Instagram URL'></input> */}
+                <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
+                <div className='addContentWrap'>
+                    <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={handleAddContent}>Add Content</button>
+                    {/* {load !== '' && <button onClick={() => uploadTask.cancel()} className='addContent delete' type='button'>Stop</button>} */}
+                    {load !== '' && <p>{load} uploaded</p>}
+                </div></div>
+            <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
+                onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>
+                {IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
+            {IDs.indexOf(name) !== -1 && <button className={`${confirm ? "submit" : "delete"}`}
+                onClick={() => setConfirm(!confirm)} type="button">{confirm ? "Cancel" : "Delete Post"}</button>}
+            {confirm && <button className={`delete`} onClick={() => handleDeletePost()} type="button">Confirm</button>}
+        </form>
     }</div>
 }
 

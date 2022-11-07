@@ -53,6 +53,7 @@ const FormWrapper = styled(motion.div)`
     flex-direction: column;
     align-items: center;
     color: var(--offwhite) !important;
+    background-color: var(--blue);
 
     @media screen and (max-width: 768px) {
        width: 100%;
