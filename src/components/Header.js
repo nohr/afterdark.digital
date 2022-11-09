@@ -41,10 +41,9 @@ function Header({ header, user }) {
             </div>}
         </NavWrapper>
         {(snap.menu) && <>
-            {snap.mobile && <div>
-                <NavLink to={'/shop'}><h1>Shop</h1></NavLink>
-                {/* {user && <NavLink to={'/editor'}><h1>Editor</h1></NavLink>} */}
-                <NavLink to={'/editor'}><h1>Editor</h1></NavLink>
+            {snap.mobile && <div className='mobileNav Links'>
+                <NavLink to={'/shop'}>Shop</NavLink>
+                {user && <NavLink to={'/editor'}>Editor</NavLink>}
             </div>}
             <Contact />
         </>}
@@ -52,15 +51,13 @@ function Header({ header, user }) {
         {filter &&
             <CategoryWrapper top={header.current ? `${header.current.clientHeight}px` : `-40px`}>
                 {snap.categories.map((category, i) => {
-                    let active = location.pathname === `/projects/${category.toLowerCase()}`;
-                    // console.log(path);
-                    return <NavLink className={active ? "active" : ""} key={i} to={`/projects/${category.toLowerCase()}`}>
+                    return <NavLink className={({ isActive }) => (isActive ? 'active' : '')} to={`/projects/${category.toLowerCase()}`}
+                        key={i}>
                         {category}
                     </NavLink>
                 })}
             </CategoryWrapper>}
-    </>
-    )
+    </>)
 }
 
 export default Header
@@ -99,6 +96,21 @@ const MetaNavWrapper = styled.div`
         bottom: unset;
         /* width: 100wv; */
     }
+    .mobileNav{
+        font-size: 20px;
+        padding: 20px 0;
+        font-variant-caps: all-small-caps;
+        justify-content: space-around;
+        display: flex;
+        background-color: var(--blue);
+        border: 1px dashed;
+        border-color: var(--offwhite) transparent;
+        *{
+            font-weight: 700;
+            padding: 5px;
+            border: 1px solid var(--offwhite) ;
+        }
+    }
 `
 const NavWrapper = styled.div`
     display: flex;
@@ -124,6 +136,7 @@ const NavWrapper = styled.div`
     }
 
     & .Links{
+        font-variant-caps: all-small-caps;
         height: auto;
         width: 100%;
         display: flex;
@@ -216,6 +229,10 @@ const CategoryWrapper = styled.div`
     transition: all 0.3s ease-in-out;
     column-gap: 30px;
 
+    @media screen and (max-width: 768px) {
+        column-gap: 10px;
+    }
+
     a {
         color: var(--contrast);
         cursor: pointer;
@@ -225,7 +242,7 @@ const CategoryWrapper = styled.div`
 
         &:hover, .active {
             color: var(--bgSecondary) !important;
-            background-color: var(--contrast);
+            background-color: var(--contrast) !important;
         }
     }
 `

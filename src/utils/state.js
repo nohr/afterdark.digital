@@ -6,5 +6,6 @@ export const state = proxy({
     // Mobile
     mobile: window.matchMedia("(max-width: 768px)").matches,
     menu: false,
-    categories: []
+    categories: [],
+    load: true,
 })

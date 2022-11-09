@@ -6,11 +6,13 @@ import { Link } from 'react-router-dom'
 import { state } from '../utils/state'
 import { handleMousemove } from '../utils/scroll'
 import ReactTilty from 'react-tilty'
+import { Arrow } from '../utils/svg'
 
-function Projects({ filter, project }) {
+function Projects({ filter, project, marginTop }) {
     const snap = useSnapshot(state);
     const CardsScroll = useRef(null);
     const [projects, setProjects] = useState([]);
+    const [hide, setHide] = useState(false);
 
     // turn on horizontal scroll only for desktop
     useEffect(() => {
@@ -18,6 +20,7 @@ function Projects({ filter, project }) {
         return () => null;
     }, [snap.mobile])
 
+    // filter projects
     useEffect(() => {
         filter && setProjects(snap.data.filter(project => project.category === filter));
         !filter && setProjects(snap.data);
@@ -28,11 +31,12 @@ function Projects({ filter, project }) {
         const date = new Date(timestamp.seconds * 1000);
         return date.toLocaleDateString();
     }
-
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}>
-        <CardWrapper styling={project ? `column-gap: 20px !important; height: 100%; padding: 0 50px;`
-            : `flex-direction: column; width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`} >
+        animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
+        height={project ? snap.mobile ? '100%' : `75%` : `80%`} marginTop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
+        <CardWrapper styling={project ? `${snap.mobile ? "height: 70vh;" : "height: 100%;"} padding: 0 20px; column-gap: 20px !important;`
+            : `flex-direction: column; width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`}
+        >
             {project ?
                 project.content.map((item, key) => {
                     // check if the content is an image, video, or tiktok
@@ -42,13 +46,10 @@ function Projects({ filter, project }) {
                                 sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
                                 <p>{item.type} type not supported</p>;
                     return <Item key={key} styling={!snap.mobile ? `width: 80vw;`
-                        : `width: 100vw; height: 100%; & a{width: inherit;}`}>
-                        {element}
-                        {/* <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item, key)} type='button'>Delete {item.type}</button> */}
-                    </Item>
+                        : `width: 80vw; height: 100%; & a{width: inherit;}`}>{element}</Item>
                 })
-                : projects.map((project, key) => {
-                    // set bg image in the center of the card
+                : // home page cards
+                projects.map((project, key) => {
                     const image = {
                         backgroundImage: `url(${project.cover})`,
                         backgroundPosition: "center",
@@ -60,7 +61,7 @@ function Projects({ filter, project }) {
                     function CardMetadata() {
                         return <div className='metadata'>
                             <div className='title'>{project.name}</div>
-                            <div>{convertDate(project.date)}</div>
+                            <div style={{ fontVariantCaps: "all-small-caps" }}>{convertDate(project.date)}</div>
                             {/* <div>{project.description}</div> */}
                         </div>
                     }
@@ -68,45 +69,37 @@ function Projects({ filter, project }) {
                     if (snap.mobile) {
                         return (<Card to={`/${project.path}`} style={image} key={key}><CardMetadata /></Card>)
                     } else {
-                        return (<ReactTilty reverse={true} easing={"cubic-bezier(0.03,0.98,0.52,0.99)"} style={{ height: '100%', aspectRatio: 1 / 1 }} key={key}>
-                            <Card to={`/${project.path}`} style={image}><CardMetadata /></Card>
-                        </ReactTilty>)
+                        return (<ReactTilty reverse={true} easing={"cubic-bezier(0.03,0.98,0.52,0.99)"} style={{ height: '100%', aspectRatio: 1 / 1 }} key={key}><Card to={`/${project.path}`} style={image}><CardMetadata /></Card></ReactTilty>)
                     }
                 })}
         </CardWrapper>
-        {project && <div>
-            <h1>{project.name}</h1>
-            <p>{convertDate(project.date)}</p>
-            <a href={project.url} target='_blank' rel='noreferrer'>{project.url}</a>
-            <p>{project.description}</p>
-        </div>
-        }
-        {/* Red Egdes */}
-        {/* {!snap.mobile && <span
-            className='edge'
-            style={{
-                position: "fixed",
-                zIndex: "-3",
-                top: edgeSize - 50 + "px",
-                bottom: edgeSize - 50 + "px",
-                left: edgeSize + 80 + "px",
-                right: edgeSize + 81 + "px",
-                border: "1px solid",
-                borderColor: "#00000000 #f00",
-                borderRadius: "5px 5px 5px 5px",
-            }}
-        ></span>} */}
+        {project && <ProjectDetails height={!hide ? '35%' : 'min-content'}>
+            <div className='details'>
+                <Arrow hide={hide} setHide={setHide} />
+                <h1>{project.name}</h1>
+                {!hide && <div className='caption'>
+                    <p style={{ fontVariantCaps: "all-small-caps" }}>{convertDate(project.date)}</p>
+                    {project.url !== '' && <a href={project.url} target='_blank' rel='noreferrer'>{project.url.replace(/(^\w+:|^)\/\//, '')}</a>}
+                </div>}
+            </div>
+            {!hide && <p className='desc'>{project.description}</p>}
+        </ProjectDetails>}
     </CardScroller >)
 }
 
 export default Projects;
 
 const CardScroller = styled(motion.div)`
-    height: 100%;
     display: block;
+    margin-top: ${props => props.marginTop};
+
+    @media screen and (min-width: 768px) {
+        height:${props => props.height};
+    }
 `
 const CardWrapper = styled.div`
     /* transform: skewX(4deg); */
+    /* height: 100%; */
     transition: 0.3s;
     display: flex;
     justify-content: flex-start;
@@ -118,7 +111,7 @@ const CardWrapper = styled.div`
         align-items: center;
     }
     @media screen and (min-width: 768px) {
-    padding: 50px 0;
+        /* padding: 50px 0; */
     }
 `
 const Card = styled(Link)`
@@ -140,12 +133,14 @@ const Card = styled(Link)`
         /* opacity: 0.75; */
         border: 1px solid var(--blue);
         .metadata{
-        color: var(--white) !important;
-        background-color: var(--blue);
+            background-color: var(--blue);
+            color: var(--white) !important;
         }
     }
 
     .metadata{
+        display: flex;
+        justify-content: space-evenly;
         color: var(--contrast) !important;
         background-color: var(--bgSecondary);
         padding: 10px;
@@ -171,10 +166,6 @@ const Card = styled(Link)`
 `
 const Item = styled.div`
     position: relative;
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* justify-content: center; */
-    /* align-items: center; */
     width: 100%;
     height: 100%;
 
@@ -185,5 +176,63 @@ const Item = styled.div`
 
     img{
         height: 100%;
+    }
+`
+const ProjectDetails = styled.div`
+        position: fixed;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    row-gap: 15px;
+        height: min-content;
+        background-color: var(--bgSecondary);
+
+    .details{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 5px;
+    }
+
+    .caption{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+
+    }
+    .desc{
+        white-space: pre-line;
+        overflow-y: scroll;
+        height: 200px;
+        background-color: var(--bgPrimary);
+        padding: 10px;
+    }
+
+    a{
+        font-weight: 700;
+        padding: 1px 6px;
+        color: var(--white) !important;
+        background-color: var(--blue) !important;
+
+        &:hover{
+            color: var(--blue) !important;
+            background-color: var(--white) !important;
+        }
+    }
+
+    @media screen and (min-width: 768px) {
+        bottom: 10px;
+        margin-top: 20px;
+        padding: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 65ch;
+    }
+
+    @media screen and (max-width: 768px) {
+        bottom: 0px;
+        padding: 10px;
+        width: 100vw;
     }
 `

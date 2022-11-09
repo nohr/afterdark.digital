@@ -11,8 +11,8 @@
   --offblack: #181a1b;
   --black: #0e0f0f;
   --offwhite: #f6f6f6;
-  --blue: #0f6aff;
-  --bluealpha: #0f6affaa;
+  --blue: #0000ee;
+  --bluealpha: #0000eeaa;
   --red: #dd4444;
   --redalpha: #dd4444aa;
 }
@@ -48,7 +48,8 @@ button {
 @media (prefers-color-scheme: light) {
   * {
     --contrast: #181a1b;
-    --bgSecondary: #f6f6f6;
+    --bgPrimary: var(--white);
+    --bgSecondary: var(--offwhite);
   }
   body {
     color: var(--offblack);
@@ -64,8 +65,9 @@ button {
 }
 @media (prefers-color-scheme: dark) {
   * {
-    --contrast: #f6f6f6;
-    --bgSecondary: #181a1b;
+    --contrast: var(--offwhite);
+    --bgPrimary: var(--black);
+    --bgSecondary: var(--offblack);
   }
   * {
     color: var(--offwhite) !important;
@@ -92,10 +94,10 @@ button {
 
 .App {
   display: flex;
-  justify-content: flex-end;
+  /* justify-content: center; */
   flex-direction: column;
   height: 100%;
-  width: max-content;
+  width: fit-content;
 }
 
 a {
@@ -104,18 +106,6 @@ a {
   -moz-user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
-}
-
-a.footer {
-  flex-direction: column;
-  align-content: center;
-  text-decoration: none;
-  background-color: var(--blue);
-  color: var(--offwhite);
-  width: 100%;
-  padding: 5px;
-  text-align: center;
-  vertical-align: middle;
 }
 
 ::-webkit-scrollbar {

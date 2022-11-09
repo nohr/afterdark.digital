@@ -18,8 +18,8 @@ function Contact() {
         exit={{ opacity: 0 }}
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
-        <h2>Book with us!</h2>
-        <div className='footer'> <a href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a></div>
+        <h3>Book with us!</h3>
+        <div className=''> <a href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a></div>
         <Form onSubmit={handleSubmit}>
             <label>
                 <p>First Name</p>
@@ -37,7 +37,7 @@ function Contact() {
                 <p>Email</p>
                 <input type="text" value={value} onChange={handleChange} />
             </label>
-            <input className='submit' type="submit" value="Submit" />
+            <button className='submit' type="submit">Submit</button>
         </Form>
     </FormWrapper>)
 }
@@ -59,7 +59,7 @@ const FormWrapper = styled(motion.div)`
        width: 100%;
     }
 
-    & h2{
+    & h3{
         padding: 0 0 5px 0;
     }
 `
@@ -107,4 +107,26 @@ const Form = styled.form`
             background-color: transparent !important;
         }
     }
+        button{
+            margin: auto;
+            font-size: 12px;
+        white-space: nowrap;
+        display: block;
+        cursor: pointer;
+        width: min-content;
+        height: 30px;
+        padding: 5px 10px !important;
+        -webkit-appearance: none;
+        color: var(--offwhite);
+        border: none;
+        border-radius: 0;
+        border: 1px solid var(--offwhite);
+        background-color: var(--blue) !important;
+
+            &:hover{
+                opacity: 50%;
+                background-color: var(--bluealpha) !important;
+            }
+    }
+
 `

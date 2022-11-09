@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { NavIcon, SvgLogo } from "../components/Header";
 import { state } from "./state";
 
@@ -27,14 +28,42 @@ export function HamburgerIcon() {
         </NavIcon>
     );
 }
-export function EmailIcon() {
-    return (
-        <NavIcon
-            xmlns="http://www.w3.org/2000/svg"
-            data-name="Layer 1"
-            viewBox="0 0 505.465 226.314"
+export function Arrow({ hide, setHide }) {
+    return <Caret
+        transform={!hide ? "" : "rotate(180deg)"}
+        onClick={() => setHide(!hide)}
+        background={hide ? "transparent" : "var(--contrast)"}>
+        <svg
+            focusable="false"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            fill={hide ? "var(--contrast)" : "var(--bgSecondary)"}
         >
-            <path vectorEffect='non-scaling-stroke' d="M505.418 7.832c0-.02-.008-.039-.008-.059a8.356 8.356 0 00-.242-1.273c-.012-.035-.012-.07-.02-.109-.012-.039-.016-.039-.023-.059a9.063 9.063 0 00-.453-1.215c-.031-.066-.062-.125-.094-.188h.004a8.672 8.672 0 00-.633-1.109c-.02-.031-.043-.055-.066-.086a8.954 8.954 0 00-.746-.918c-.051-.051-.094-.109-.145-.16v.004a8.896 8.896 0 00-.902-.809c-.062-.051-.129-.098-.191-.145a8.752 8.752 0 00-1.055-.672c-.016-.012-.035-.016-.051-.023v-.004a8.818 8.818 0 00-1.144-.492c-.059-.02-.109-.043-.168-.062a8.775 8.775 0 00-1.219-.309c-.078-.016-.156-.023-.234-.035A8.72 8.72 0 00496.716 0H139.995c-.43.004-.859.039-1.289.109-.082.012-.16.023-.238.039V.144c-.41.074-.812.176-1.211.301-.051.016-.102.039-.152.059-.379.133-.75.289-1.105.477-.031.016-.062.027-.094.043h-.004a9.303 9.303 0 00-2.144 1.602c-.039.039-.07.082-.109.121-.262.277-.508.57-.73.879-.035.051-.074.098-.109.148-.234.34-.445.699-.629 1.07l-.094.195a8.396 8.396 0 00-.469 1.211l-.008.023c-.008.023-.008.043-.016.066a8.54 8.54 0 00-.254 1.211c-.008.062-.023.125-.031.188h.004c-.043.34-.062.676-.066 1.016v208.81c0 2.32.922 4.543 2.566 6.184a8.728 8.728 0 006.184 2.566h356.718c2.32 0 4.547-.922 6.188-2.566a8.741 8.741 0 002.562-6.184V8.764a8.21 8.21 0 00-.051-.926l.004-.006zm-39.945 9.672l-152.65 92.785-143.22-92.781 295.87-.004zm-316.73 191.31V24.844l159.17 103.11a8.75 8.75 0 009.297.133l170.75-103.78.004 184.51-339.221-.003zM0 .012h98.434v17.5H0V.012zM23.848 47.542h74.586v17.5H23.848v-17.5zM41.348 95.062h57.086v17.5H41.348v-17.5z"></path>
-        </NavIcon>
-    );
+            <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path>
+        </svg>
+    </Caret>;
 }
+const Caret = styled.div`
+    & svg{
+        transform: ${props => props.transform};
+    align-self: center;
+    height: 25px;
+    width: auto;
+    /* fill: var(--contrast); */
+    z-index: 4000;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: ${props => props.background};
+
+        @media screen and (max-width: 768px) {
+            height: 40px;
+        }
+
+         @media screen and (min-width: 768px) {
+                &:hover {
+                    fill: var(--blue);
+                }
+        }
+    }
+
+`

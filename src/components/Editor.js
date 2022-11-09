@@ -9,15 +9,6 @@ import { state } from '../utils/state';
 import { Navigate } from 'react-router';
 // import InstagramEmbed from 'react-instagram-embed';
 
-function Login() {
-    return (<ContentPage>
-        <h1>Editor</h1>
-        <button style={{ width: "50%" }} onClick={signInWithGoogle}>
-            Sign in with Google
-        </button>
-    </ContentPage>);
-}
-
 function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPath, cover, setCover }) {
     const snap = useSnapshot(state);
     const nameInput = useRef(null);
@@ -110,6 +101,11 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
     function handleAddContent() {
         // handle uploading multiple files with an ordered id
         for (let file of selectedFiles) {
+            // check file size
+            if (file.size > 10000000) {
+                alert("File size is too large. Please upload a file less than 10MB.");
+                return;
+            }
             // keep track of file upload progress
             let progress = 0;
             // create a unique id for the file
@@ -176,7 +172,6 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
                 deleteObject(itemRef);
             });
         });
-
     };
 
     async function uploadData() {
@@ -260,7 +255,6 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
                 <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
                 <div className='addContentWrap'>
                     <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={handleAddContent}>Add Content</button>
-                    {/* {load !== '' && <button onClick={() => uploadTask.cancel()} className='addContent delete' type='button'>Stop</button>} */}
                     {load !== '' && <p>{load} uploaded</p>}
                 </div></div>
             <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
@@ -277,22 +271,41 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
     const [preview, setPreview] = useState(`Upload and click 'Add Image' to preview.`);
     // set the cover image when the content changes
     useEffect(() => {
+        // delete the folder from firebase storage if it exists
         if (content.length > 0) {
-            // go through the content array and stop and set the first image or video
+            // go through the content array and stop and set the first image as the cover
             for (let i = 0; i < content.length; i++) {
                 if (content[i].type === "image") {
-                    // generate a thumbnail from the image
-                    let thumb = content[i].name.split('.');
-                    thumb[thumb.length - 2] += '_1080x1080';
-                    thumb = thumb.join('.');
-                    console.log(thumb);
-                    console.log(thumb);
-                    setPreview(thumb);
-                    // setCover((content[i].url));
+                    // // generate a thumbnail from the image
+                    // let thumb = content[i].name.split('.');
+                    // thumb[thumb.length - 2] += '_1080x1080';
+                    // thumb = thumb.join('.');
+                    // console.log(thumb);
+                    // // wait for the thumbnail to be generated and then set the cover
+                    // setTimeout(() => {
+                    //     // setCover(thumb);
+                    //     // setPreview(thumb);
+                    //     // download the thumbnail from the storage bucket
+                    //     let storageRef = ref(storage, `projects/${name} Media/thumbnails/${thumb}`);
+                    //     getDownloadURL(storageRef).then(url => {
+                    //         // setPreview(url);
+                    //         setCover(url);
+                    //     });
+                    // }, 1000);
+                    setCover(content[i].url);
                     break;
                 }
             }
-        } else { setCover(''); }
+        } else {
+            setCover('');
+            // delete the thumbnail folder from firebase storage if it exists
+            let storageRef = ref(storage, `projects/${name} Media/thumbnails`);
+            listAll(storageRef).then((res) => {
+                res.items.forEach((itemRef) => {
+                    deleteObject(itemRef);
+                });
+            });
+        }
     }, [content]);
 
     // Set the preview content when the document matches from the database
@@ -353,7 +366,7 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
     return <div className='slideshow'>{preview}</div>
 }
 
-export function Editor({ user }) {
+export function Editor({ user, marginTop }) {
     const snap = useSnapshot(state);
     const [path, setPath] = useState('');
     const [IDs, setIDs] = useState([]);
@@ -362,7 +375,7 @@ export function Editor({ user }) {
     const [content, setContent] = useState([]);
 
     if (user) {
-        return <ContentPage>
+        return <ContentPage style={{ marginTop: marginTop }}>
             <div className='homebar'>
                 <h1>Editor</h1>
             </div>
@@ -384,7 +397,12 @@ export function Editor({ user }) {
             {/* {path !== '' && <Navigate to={`/editor/${path}`} />} */}
         </ContentPage>
     } else {
-        return <Login />
+        return <ContentPage style={{ marginTop: marginTop }}>
+            <h1>Editor</h1>
+            <button style={{ width: "50%" }} onClick={signInWithGoogle}>
+                Sign in with Google
+            </button>
+        </ContentPage>
     }
 }
 
@@ -396,7 +414,6 @@ const ContentPage = styled.div`
     align-items: center;
     color: var(--black )!important;
     justify-content: flex-start;
-    overflow-y: scroll;
 
     .homebar{
         width: 100%;
@@ -407,7 +424,7 @@ const ContentPage = styled.div`
     .dash{
         display: flex;
         flex-direction: row;
-        height: 100%;
+        /* height: 100%; */
         width: 100%;
         
         @media screen and (max-width: 768px) {

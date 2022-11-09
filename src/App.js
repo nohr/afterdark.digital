@@ -21,8 +21,8 @@ function App() {
 
   useEffect(() => {
     setPadding({ header: header.current.clientHeight });
-    console.log(header.current.clientHeight);
-  }, [location, snap.categories, header]);
+    // console.log(header.current.clientHeight);
+  }, [location, header]);
 
   document.addEventListener('gesturestart', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
   document.addEventListener('gesturechange', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
@@ -48,6 +48,7 @@ function App() {
       const data = await getDocs(q);
       state.data = data.docs.map(doc => doc.data());
       state.categories = [...new Set(data.docs.map(doc => doc.data().category))];
+      state.categories.sort();
     })();
 
     return () => state.data = [];
@@ -55,72 +56,35 @@ function App() {
 
   // get realtime updates from firebase
 
-  return (
-    <div className="App">
-      <Header header={header} user={user} />
-      <ContentWrapper
-        width={!(location.pathname === "/") ? "100%" : null}
-        style={{ paddingTop: padding.header }}>
-        <Routes>
-          <Route path="/" element={<Projects />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/editor" element={<Editor user={user} setUser={setUser} />} />
-          {snap.data.map((value, index) => <Fragment key={index}>
-            <Route path={`/${value.path}`} element={<Projects project={value} />} />
-            {/* <Route path={`editor/${value.path}`} element={<Editor user={user} setUser={setUser} />} /> */}
-          </Fragment>)}
-          {snap.categories.map((category, index) =>
-            <Route key={index} path={`/projects/${category.toLowerCase()}`} element={<Projects filter={category} />} />)}
-        </Routes>
-      </ContentWrapper>
-    </div>
-  );
+  return <div className="App">
+    <Header header={header} user={user} />
+    <Routes>
+      <Route path="/" element={<Projects marginTop={padding.header} />} />
+      <Route path="/projects" element={<Projects marginTop={padding.header} />} />
+      <Route path="/editor" element={<Editor user={user} setUser={setUser} marginTop={padding.header} />} />
+      <Route path="/shop" element={<Shop marginTop={padding.header} />} />
+      {snap.data.map((value, index) =>
+        <Route key={index} path={`/${value.path}`}
+          element={<Projects project={value} marginTop={padding.header} />} />)}
+      {snap.categories.map((category, index) =>
+        <Route key={index} path={`/projects/${category.toLowerCase()}`}
+          element={<Projects filter={category} marginTop={padding.header} />} />)}
+    </Routes>
+  </div>;
 }
 
 export default App;
 
 const ContentWrapper = styled.div`
-    height: 100%;
+    height: 70%;
     width: ${props => props.width};
-    position: absolute;
+    display: flex;
+    flex-direction: column;
+    /* position: absolute; */
     /* display: grid;
     grid-template-columns: 100%;
     grid-template-rows: 1fr 1fr; */
-    display: flex;
     /* position: fixed; */
-    flex-direction: column;
     /* overflow-x: hidden; */
     /* margin: 0 20px; */
-
-    .footer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        background: var(--blue);
-        a {
-            color: #fff;
-            text-decoration: none;
-        }
-    }
-
-    @media screen and (max-width: 768px) {    
-        .footer{
-            position: fixed;
-            bottom: 0;
-            width: 100vw !important;
-        }
-    }
-
-    @media screen and (min-width: 768px) {
-        .footer{
-            height: 26px;
-            position: fixed;
-            top: 100px;
-            right: 0;
-            width: min-content !important;
-            padding: 0 10px;
-        }
-    }
 `
