@@ -34,8 +34,8 @@ function Projects({ filter, project, marginTop }) {
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
         height={project ? snap.mobile ? '100%' : `75%` : `80%`} margintop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
-        <CardWrapper styling={project ? `${snap.mobile ? "height: 70vh;" : "height: 100%; padding: 0 20px;"} column-gap: 20px !important;`
-            : `flex-direction: column; width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`}
+        <CardWrapper styling={project ? `${snap.mobile ? "flex-direction: column; padding-bottom: 60px;" : "height: 100%; padding: 0 20px;"} column-gap: 20px !important;`
+            : `width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`}
         >
             {project ?
                 project.content.map((item, key) => {
@@ -46,7 +46,7 @@ function Projects({ filter, project, marginTop }) {
                                 sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
                                 <p>{item.type} type not supported</p>;
                     return <Item key={key} styling={!snap.mobile ? `width: 80vw;`
-                        : `width: 80vw; height: 100%; & a{width: inherit;}`}>{element}</Item>
+                        : `width: 100%; height: 80vh !important; & a{width: inherit;}`}>{element}</Item>
                 })
                 : // home page cards
                 projects.map((project, key) => {
@@ -178,6 +178,23 @@ const Item = styled.div`
 
     img{
         height: 100%;
+    }
+
+    @media screen and (max-width: 768px) {
+        display: flex;
+        justify-content: center;
+        height: auto !important;
+        width: 100vw;
+
+    iframe{
+        height: 60vh !important;
+        border: none;
+    }
+
+    img{
+        width: 100%;
+        height: auto !important;
+    }
     }
 `
 const ProjectDetails = styled.div`
