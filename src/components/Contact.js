@@ -3,14 +3,10 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 function Contact() {
-    const [value, setValue] = useState('');
-    function handleSubmit(e) {
-        e.preventdefault();
-    }
-
-    const handleChange = (e) => {
-        setValue(e.target.value);
-    }
+    const [first, setFirst] = useState('');
+    const [last, setLast] = useState('');
+    const [insta, setInsta] = useState('');
+    const [email, setEmail] = useState('');
 
     return (<FormWrapper
         initial={{ opacity: 0 }}
@@ -20,22 +16,22 @@ function Contact() {
     >
         <h3>Book with us!</h3>
         <div className=''> <a href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a></div>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={e => e.preventDefault()}>
             <label>
                 <p>First Name</p>
-                <input type="text" value={value} onChange={handleChange} />
+                <input type="text" value={first} onChange={e => setFirst(e.target.value)} required />
             </label>
             <label>
                 <p>Last Name</p>
-                <input type="text" value={value} onChange={handleChange} />
+                <input type="text" value={last} onChange={e => setLast(e.target.value)} />
             </label>
             <label>
                 <p>Instagram Handle</p>
-                <input type="text" value={value} onChange={handleChange} />
+                <input type="text" value={insta} onChange={e => setInsta(e.target.value)} />
             </label>
             <label>
                 <p>Email</p>
-                <input type="text" value={value} onChange={handleChange} />
+                <input type="text" value={email} onChange={e => setEmail(e.target.value)} required />
             </label>
             <button className='submit' type="submit">Submit</button>
         </Form>
@@ -93,7 +89,7 @@ const Form = styled.form`
         border: 1px solid var(--offwhite);
 
         &:focus{
-            color: var(--black);
+            color: var(--black) !important;
             background-color: var(--offwhite) !important;
         }
 

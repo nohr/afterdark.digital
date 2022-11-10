@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useSnapshot } from "valtio";
@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import Projects from "./components/Projects";
 import { state } from "./utils/state";
 import { Editor } from "./components/Editor";
-import { Shop } from "./components/Shop";
+// import { Shop } from "./components/Shop";
 import { db } from "./utils/api";
 
 function App() {
@@ -21,7 +21,6 @@ function App() {
 
   useEffect(() => {
     setPadding({ header: header.current.clientHeight });
-    // console.log(header.current.clientHeight);
   }, [location, header]);
 
   document.addEventListener('gesturestart', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
@@ -54,15 +53,13 @@ function App() {
     return () => state.data = [];
   }, [db])
 
-  // get realtime updates from firebase
-
   return <div className="App">
     <Header header={header} user={user} />
     <Routes>
       <Route path="/" element={<Projects marginTop={padding.header} />} />
       <Route path="/projects" element={<Projects marginTop={padding.header} />} />
       <Route path="/editor" element={<Editor user={user} setUser={setUser} marginTop={padding.header} />} />
-      <Route path="/shop" element={<Shop marginTop={padding.header} />} />
+      {/* <Route path="/shop" element={<Shop marginTop={padding.header} />} /> */}
       {snap.data.map((value, index) =>
         <Route key={index} path={`/${value.path}`}
           element={<Projects project={value} marginTop={padding.header} />} />)}

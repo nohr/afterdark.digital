@@ -34,7 +34,7 @@ function Projects({ filter, project, marginTop }) {
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
         height={project ? snap.mobile ? '100%' : `75%` : `80%`} marginTop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
-        <CardWrapper styling={project ? `${snap.mobile ? "height: 70vh;" : "height: 100%;"} padding: 0 20px; column-gap: 20px !important;`
+        <CardWrapper styling={project ? `${snap.mobile ? "height: 70vh;" : "height: 100%; padding: 0 20px;"} column-gap: 20px !important;`
             : `flex-direction: column; width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`}
         >
             {project ?
@@ -199,7 +199,7 @@ const ProjectDetails = styled.div`
         flex-direction: row;
         justify-content: space-evenly;
         width: 100%;
-
+        flex-wrap: wrap;
     }
     .desc{
         white-space: pre-line;

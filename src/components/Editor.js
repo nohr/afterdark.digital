@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import styled from 'styled-components';
 import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
-import { Navigate } from 'react-router';
 // import InstagramEmbed from 'react-instagram-embed';
 
 function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPath, cover, setCover }) {
@@ -454,15 +453,14 @@ const ContentPage = styled.div`
     form{
         @media screen and (max-width: 768px) {
             justify-content: space-evenly;
-            overflow-y: unset;
+            /* overflow-y: unset; */
         }
 
         @media screen and (min-width: 768px) {
             justify-content: flex-start;
             padding: 15px;
-            width: 100%;
         }
-        /* width: 100%; */
+        width: 100%;
         height: min-content;
         display: flex;
         flex-direction: column !important;

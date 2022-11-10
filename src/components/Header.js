@@ -32,7 +32,7 @@ function Header({ header, user }) {
                 <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Contact</a>
                 {user && <NavLink to={'/editor'}>Editor</NavLink>}
                 <Logo />
-                <NavLink to={'/shop'}>Shop</NavLink>
+                <a href='https://www.afterdark.digital/shop/p/dept-ar-t-shirt' target='_blank' rel='noreferrer'>Shop</a>
                 {user && <a href='#' onClick={() => auth.signOut()} >Sign Out</a>}
             </div>}
             {snap.mobile && <div className='Links'>
@@ -42,7 +42,7 @@ function Header({ header, user }) {
         </NavWrapper>
         {(snap.menu) && <>
             {snap.mobile && <div className='mobileNav Links'>
-                <NavLink to={'/shop'}>Shop</NavLink>
+                <a href='https://www.afterdark.digital/shop/p/dept-ar-t-shirt' target='_blank' rel='noreferrer'>Shop</a>
                 {user && <NavLink to={'/editor'}>Editor</NavLink>}
             </div>}
             <Contact />
