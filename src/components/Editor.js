@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { db, signInWithGoogle, storage } from '../utils/api';
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, Timestamp } from 'firebase/firestore/lite';
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
-import { v4 } from 'uuid';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore/lite';
 import styled from 'styled-components';
 import { useSnapshot } from 'valtio';
+import { db, signInWithGoogle } from '../utils/firebase/api';
 import { state } from '../utils/state';
+import { handleAddContent, handleDeleteContent, handleDeletePost } from '../utils/firebase/firebase.service';
+import { clearSelectedName, generateElement, handleUploadPost } from '../utils/common';
 // import InstagramEmbed from 'react-instagram-embed';
 
 function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover, setCover }) {
@@ -24,11 +24,10 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
     const [TikTokID, setTikTokID] = useState('');
     // const [InstaID, setInstaID] = useState('');
     const [load, setLoad] = useState('');
-    let newContent = [];
-    let uploadTask = null;
+    const [confirm, setConfirm] = useState(false);
 
     // Hide mobile keyboard on selection
-    useEffect(() => { if (IDs.indexOf(name) !== -1) nameInput.current.blur(); }, [name, IDs, nameInput]);
+    useEffect(() => { if ((IDs.indexOf(name) !== -1) && nameInput.current) nameInput.current.blur(); }, [name, IDs, nameInput]);
 
     // Get and List document id and categories in datalist
     useEffect(() => {
@@ -71,165 +70,13 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
         }
     }, [name, IDs])
 
-    function clearForm() {
-        setName('');
-        setCategory('');
-        setDescription('');
-        setDate('');
-        setURL('');
-        setContent([]);
-        setSelectedFiles('');
-        setIsFilePicked(false);
-        setTikTokID('');
-        // setInstaID('');
-    };
-
-    function clearSelectedName() {
-        if (nameInput.current) {
-            clearForm();
-            setContent([]);
-            let options = dataList.current.options;
-
-            for (var i = 0; i < options.length; i++) {
-                options[i].selected = false;
-            }
-        }
-    };
-
-    function handleAddContent() {
-        // handle uploading multiple files with an ordered id
-        for (let file of selectedFiles) {
-            // check file size
-            if (file.size > 10000000) {
-                alert("File size is too large. Please upload a file less than 10MB.");
-                return;
-            }
-            // keep track of file upload progress
-            let progress = 0;
-            // create a unique id for the file
-            const id = v4();
-            // create a reference to the storage bucket location
-            const storageRef = ref(storage, `projects/${name} Media/${id}-${file.name}`);
-            // upload the file
-            uploadTask = uploadBytesResumable(storageRef, file);
-            uploadTask.on('state_changed', (snapshot) => {
-                // calculate the upload progress
-                progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                setLoad(`${progress}%`);
-            }, (error) => {
-                // catch errors
-                console.log(error);
-            }, () => {
-                // get the download url when complete
-                getDownloadURL(storageRef).then(downloadURL => {
-                    // add the file to the array of files with an ordered id
-                    newContent.push({ id, name: `${id}-${file.name}`, url: downloadURL, type: file.type.split('/')[0] });
-                    // add the new content to the content array
-                    setContent([...content, ...newContent]);
-                    // update the firestore document
-                    setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
-                    // reset the progress
-                    setLoad('');
-                    progress = 0;
-                });
-            });
-        };
-
-        // handle adding TikTok embed
-        if (TikTokID !== '') {
-            newContent.push({ id: v4(), url: TikTokID, type: 'tiktok' });
-            // append the new content to the state  
-            setContent([...content, ...newContent]);
-            // update the firestore document
-            setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
-            setTikTokID('');
-        }
-
-        // handle adding Instagram embed
-        // if (InstaID !== '') {
-        //     newContent.push({ id: v4(), url: InstaID, type: 'instagram' });
-        //     // append the new content to the state
-        //     setContent([...content, ...newContent]);
-        //     setInstaID('');
-        // }
-
-        setIsFilePicked(false);
-        fileInput.current.value = '';
-        newContent = [];
-    };
-
-    async function handleDeletePost() {
-        setSaved(true);
-        clearSelectedName();
-        await deleteDoc(doc(db, "projects", name));
-        // delete firebase storage folder
-        // await deleteObject(ref(storage, `projects/${name} Media`));
-        let storageRef = ref(storage, `projects/${name} Media`);
-        listAll(storageRef).then((res) => {
-            res.items.forEach((itemRef) => {
-                deleteObject(itemRef);
-            });
-        });
-    };
-
-    async function uploadData() {
-        // generate a pathname for the project
-        let path = name.toLowerCase().replace(/ /g, '-');
-        let timestamp = Timestamp.fromMillis(new Date(date.split("-")[0], date.split("-")[1] - 1, date.split("-")[2]).getTime());
-        // Add or Edit Firestore doc 
-        await setDoc(doc(db, "projects", name), {
-            path: path,
-            name: name,
-            date: timestamp,
-            category: category,
-            description: description,
-            url: url,
-            cover: cover,
-            content: content
-        }, { merge: true });
-    };
-
-    function handleUploadPost() {
-        if (name !== '' && category !== '' && date !== '') {
-            uploadData();
-            setContent([]);
-            setSaved(true);
-        }
-    };
-
-    // a function that resizes the div on drag
-    // function resizeDiv(e) {
-    //     let div = document.getElementById('resize');
-
-    //     // get the mouse position
-    //     let mouseX = e.clientX;
-    //     let mouseY = e.clientY;
-
-    //     // get the div position
-    //     let divX = div.offsetLeft;
-    //     let divY = div.offsetTop;
-
-    //     // get the div size
-    //     let divWidth = div.offsetWidth;
-    //     let divHeight = div.offsetHeight;
-
-    //     // calculate the new div size
-    //     let newWidth = divWidth + (mouseX - divX);
-    //     let newHeight = divHeight + (mouseY - divY);
-
-    //     // set the new div size
-    //     div.style.width = newWidth + 'px';
-    //     div.style.height = newHeight + 'px';
-    // };
-
-    const [confirm, setConfirm] = useState(false);
     return <div className='formWrap'>{saved ? <> <p>Changes Saved!</p>
         <button onClick={() => window.location.reload(false)}>Post Again</button></ >
         : <form onSubmit={(e) => e.preventDefault()} className="secondary">
             <div className='section'>
                 Metadata
                 <input ref={nameInput} value={name} onChange={e => setName(e.target.value)} list="names" type="text" placeholder='Name' required></input>
-                <button type='button' onClick={clearSelectedName}>Clear</button>
+                <button type='button' onClick={() => clearSelectedName(nameInput, dataList, setName, setCategory, setDescription, setDate, setContent, setTikTokID, setIsFilePicked, setURL, setSelectedFiles)}>Clear</button>
                 <datalist id="names" ref={dataList}>
                     {IDs.map((name, index) => <option value={name} key={index} />)}
                 </datalist>
@@ -251,15 +98,15 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
                 {/* <input value={InstaID} onChange={e => setInstaID(e.target.value)} type="text" placeholder='Instagram URL'></input> */}
                 <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
                 <div className='addContentWrap'>
-                    <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={handleAddContent}>Add Content</button>
+                    <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={() => handleAddContent(selectedFiles, name, setLoad, content, setContent, setIsFilePicked, fileInput, TikTokID, setTikTokID)}>Add Content</button>
                     {load !== '' && <p>{load} uploaded</p>}
                 </div></div>
             <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
-                onClick={handleUploadPost} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>
+                onClick={() => handleUploadPost(name, category, description, date, url, content, cover, setSaved, setContent)} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>
                 {IDs.indexOf(name) === -1 ? "Upload" : "Save"} Post</button>
             {IDs.indexOf(name) !== -1 && <button className={`${confirm ? "submit" : "delete"}`}
                 onClick={() => setConfirm(!confirm)} type="button">{confirm ? "Cancel" : "Delete Post"}</button>}
-            {confirm && <button className={`delete`} onClick={() => handleDeletePost()} type="button">Confirm</button>}
+            {confirm && <button className={`delete`} onClick={() => { handleDeletePost(name, setSaved); clearSelectedName(nameInput, dataList, setName, setCategory, setDescription, setDate, setContent, setTikTokID, setIsFilePicked, setURL, setSelectedFiles); }} type="button">Confirm</button>}
         </form>
     }</div>
 }
@@ -273,35 +120,13 @@ function Preview({ content, setContent, name, IDs, setCover }) {
             // go through the content array and stop and set the first image as the cover
             for (let i = 0; i < content.length; i++) {
                 if (content[i].type === "image") {
-                    // // generate a thumbnail from the image
-                    // let thumb = content[i].name.split('.');
-                    // thumb[thumb.length - 2] += '_1080x1080';
-                    // thumb = thumb.join('.');
-                    // console.log(thumb);
-                    // // wait for the thumbnail to be generated and then set the cover
-                    // setTimeout(() => {
-                    //     // setCover(thumb);
-                    //     // setPreview(thumb);
-                    //     // download the thumbnail from the storage bucket
-                    //     let storageRef = ref(storage, `projects/${name} Media/thumbnails/${thumb}`);
-                    //     getDownloadURL(storageRef).then(url => {
-                    //         // setPreview(url);
-                    //         setCover(url);
-                    //     });
-                    // }, 1000);
                     setCover(content[i].url);
                     break;
                 }
             }
-        } else {
+        } else if (content.length === 0) {
             setCover('');
-            // delete the thumbnail folder from firebase storage if it exists
-            let storageRef = ref(storage, `projects/${name} Media/thumbnails`);
-            listAll(storageRef).then((res) => {
-                res.items.forEach((itemRef) => {
-                    deleteObject(itemRef);
-                });
-            });
+            setPreview(`Upload and click 'Add Image' to preview.`);
         }
     }, [content, name, setCover]);
 
@@ -324,45 +149,13 @@ function Preview({ content, setContent, name, IDs, setCover }) {
 
     // Set the preview when the content array changes
     useEffect(() => {
-        function handleDeleteContent(item) {
-            // remove the file from storage if its a image or video
-            if (item.type === 'image' || item.type === 'video') {
-                deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
-                // delete the thumbnail from storage
-                let thumb = item.name.split('.');
-                thumb[thumb.length - 2] += '_1080x1080';
-                thumb = thumb.join('.');
-                deleteObject(ref(storage, `projects/${name} Media/thumbnails/${thumb}`));
-            }
-            // remove the item from the content array
-            setContent(content.filter(i => i !== item));
-            // update the firestore doc
-            setDoc(doc(db, "projects", name), {
-                content: content.filter(i => i !== item)
-            }, { merge: true });
-        };
-
         // change the preview when the name changes
         setPreview(content.map((item, index) => {
-            const element = item.type === 'image' ? <img src={item.url} alt={item.name} key={index} /> :
-                item.type === 'video' ? <video src={item.url} alt={item.name} key={index} controls></video> :
-                    item.type === 'tiktok' ? <iframe src={`https://www.tiktok.com/embed/${item.url}`} title={item.url} key={Math.random()} allow-scripts="true"
-                        sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
-                        <p>{item.type} type not supported</p>;
-
-            return <div className='previewimage' key={index}> {element}
-                <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item)} type='button'>Delete {item.type}</button>
+            return <div className='previewContent' key={index}> {generateElement(item, index)}
+                <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item, name, content, setContent)} type='button'>Delete {item.type}</button>
             </div>
         }));
     }, [content, name, IDs, setContent]);
-
-    // when there is no content, show the default preview
-    useEffect(() => {
-        if (content.length === 0) {
-            setPreview(`Upload and click 'Add Image' to preview.`);
-        }
-
-    }, [name, IDs, content]);
 
     return <div className='slideshow'>{preview}</div>
 }
@@ -376,30 +169,16 @@ export function Editor({ user, marginTop }) {
 
     if (user) {
         return <ContentPage style={{ marginTop: marginTop }}>
-            <div className='homebar'>
-                <h1>Editor</h1>
-            </div>
+            <div className='homebar'><h1>Editor</h1></div>
             <div className='dash'>
-                <Form
-                    IDs={IDs}
-                    setIDs={setIDs}
-                    name={name}
-                    setName={setName}
-                    Preview={Preview}
-                    content={content}
-                    cover={cover}
-                    setCover={setCover}
-                    setContent={setContent}
-                />
+                <Form IDs={IDs} setIDs={setIDs} name={name} setName={setName} Preview={Preview} content={content} cover={cover} setCover={setCover} setContent={setContent} />
                 {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setCover={setCover} />}
             </div>
         </ContentPage>
     } else {
         return <ContentPage style={{ marginTop: marginTop }}>
             <h1>Editor</h1>
-            <button style={{ width: "50%" }} onClick={signInWithGoogle}>
-                Sign in with Google
-            </button>
+            <button style={{ width: "50%" }} onClick={signInWithGoogle}>Sign in with Google</button>
         </ContentPage>
     }
 }
@@ -576,7 +355,7 @@ const ContentPage = styled.div`
         }
     }
 
-    .previewimage{
+    .previewContent{
         img, video, iframe{
             height: 70vh;
         }

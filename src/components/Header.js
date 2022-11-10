@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
-import { auth } from '../utils/api';
+import { auth } from '../utils/firebase/api';
 import { state } from '../utils/state';
 import Contact from './Contact';
 import { HamburgerIcon, Logo } from '../utils/svg';

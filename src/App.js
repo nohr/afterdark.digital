@@ -8,7 +8,7 @@ import Projects from "./components/Projects";
 import { state } from "./utils/state";
 import { Editor } from "./components/Editor";
 // import { Shop } from "./components/Shop";
-import { db } from "./utils/api";
+import { db } from "./utils/firebase/api";
 
 function App() {
   const snap = useSnapshot(state);

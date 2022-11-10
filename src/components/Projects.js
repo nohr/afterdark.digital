@@ -7,6 +7,7 @@ import { state } from '../utils/state'
 import { handleMousemove } from '../utils/scroll'
 import ReactTilty from 'react-tilty'
 import { Arrow } from '../utils/svg'
+import { convertDate, generateElement } from '../utils/common'
 
 function Projects({ filter, project, marginTop }) {
     const snap = useSnapshot(state);
@@ -26,11 +27,6 @@ function Projects({ filter, project, marginTop }) {
         !filter && setProjects(snap.data);
     }, [filter, setProjects, snap.data]);
 
-    // convert firebase timestamp to date
-    const convertDate = (timestamp) => {
-        const date = new Date(timestamp.seconds * 1000);
-        return date.toLocaleDateString();
-    }
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
         height={project ? snap.mobile ? '100%' : `75%` : `80%`} margintop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
@@ -39,14 +35,8 @@ function Projects({ filter, project, marginTop }) {
         >
             {project ?
                 project.content.map((item, key) => {
-                    // check if the content is an image, video, or tiktok
-                    const element = item.type === 'image' ? <img src={item.url} alt={item.name} key={key} /> :
-                        item.type === 'video' ? <video src={item.url} alt={item.name} key={key} controls></video> :
-                            item.type === 'tiktok' ? <iframe src={`https://www.tiktok.com/embed/${item.url}`} title={item.url} key={key} allow-scripts="true"
-                                sandbox='allow-same-origin allow-scripts' scrolling="no" allow="encrypted-media;"></iframe> :
-                                <p>{item.type} type not supported</p>;
                     return <Item key={key} styling={!snap.mobile ? `width: 80vw;`
-                        : `width: 100%; height: 80vh !important; & a{width: inherit;}`}>{element}</Item>
+                        : `width: 100%; height: 80vh !important; & a{width: inherit;}`}>{generateElement(item, key)}</Item>
                 })
                 : // home page cards
                 projects.map((project, key) => {
