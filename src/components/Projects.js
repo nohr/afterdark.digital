@@ -200,6 +200,8 @@ const ProjectDetails = styled.div`
         flex-direction: row;
         align-items: center;
         column-gap: 10px;
+        width: 100%;
+        justify-content: space-between;
     }
     .caption{
         display: flex;
@@ -241,5 +243,11 @@ const ProjectDetails = styled.div`
         bottom: 0px;
         padding: 10px;
         width: 100vw;
+        h1{
+            font-size: 1.3rem;
+        }
+        .desc{
+            height: 35vh;
+        }
     }
 `

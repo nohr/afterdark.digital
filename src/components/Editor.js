@@ -422,11 +422,9 @@ const ContentPage = styled.div`
     .dash{
         display: flex;
         flex-direction: row;
-        /* height: 100%; */
         width: 100%;
         
         @media screen and (max-width: 768px) {
-            /* overflow-y: scroll; */
             flex-direction: column;
             padding: 10px;
         }
@@ -439,7 +437,6 @@ const ContentPage = styled.div`
             resize: horizontal;
             overflow-y: scroll;
             padding: 15px 0 15px 15px;
-            /* width: 50vw !important; */
         }
 
         display: flex;
@@ -452,7 +449,6 @@ const ContentPage = styled.div`
     form{
         @media screen and (max-width: 768px) {
             justify-content: space-evenly;
-            /* overflow-y: unset; */
         }
 
         @media screen and (min-width: 768px) {
@@ -491,7 +487,6 @@ const ContentPage = styled.div`
         font-size: 16px;
         background-color: transparent !important;
         border: 1px solid var(--blue);
-        /* border-radius: 5px; */
         
         @media screen and (max-width: 768px) {
         width: 100%;
@@ -514,7 +509,6 @@ const ContentPage = styled.div`
         width: 100%;
         height: 30px;
         padding: 5px 10px !important;
-        /* margin: 10px auto; */
         -webkit-appearance: none;
         color: var(--offwhite);
         border: none;
@@ -552,10 +546,8 @@ const ContentPage = styled.div`
     .submit, .addContent, .delete{
         align-self: flex-start;
         align-items: center;
-        /* padding: 0 !important; */
         row-gap: 0;
         border: 1px solid var(--blue);
-        /* border-radius: 5px; */
     }
 
     .delete{

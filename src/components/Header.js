@@ -68,11 +68,9 @@ const MetaNavWrapper = styled.div`
     position: fixed;
     z-index: 4000;
     top: 0;
-    /* left: 0; */
     display: flex;
     flex-direction: column;
     color: var(--offwhite) !important;
-    /* border-bottom: 1px solid var(--blue); */
     
     & *{
         transition: 0.3s !important;
@@ -90,11 +88,10 @@ const MetaNavWrapper = styled.div`
         }
     }
     @media screen and (max-width: 768px) {
-        /* position: relative !important; */
+        width: 100vw;
         top: 0;
         left: unset;
         bottom: unset;
-        /* width: 100wv; */
     }
     .mobileNav{
         font-size: 20px;
@@ -143,12 +140,12 @@ const NavWrapper = styled.div`
         column-gap: 10px;
         justify-content: flex-start;
         font-weight: 700;
-        /* font-style: italic; */
         align-items: center;
     @media screen and (min-width: 768px) {
         justify-content: center;
     }
         & a.Logo{
+            padding: 0 !important;
             cursor: pointer;
             overflow: visible !important;
             & svg{
