@@ -235,7 +235,6 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
                     {IDs.map((name, index) => <option value={name} key={index} />)}
                 </datalist>
                 <input value={date} onChange={e => setDate(e.target.value)} type="date" required></input>
-                {/* TODO: Add datalist for saved categories */}
                 <input value={category} onChange={e => setCategory(e.target.value)} list="categories" type="text" placeholder='Category' required></input>
                 <datalist id="categories" ref={dataList}>
                     {categories.map((category, index) => <option value={category} key={index} />)}
@@ -331,6 +330,11 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
             // remove the file from storage if its a image or video
             if (item.type === 'image' || item.type === 'video') {
                 deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
+                // delete the thumbnail from storage
+                let thumb = item.name.split('.');
+                thumb[thumb.length - 2] += '_1080x1080';
+                thumb = thumb.join('.');
+                deleteObject(ref(storage, `projects/${name} Media/thumbnails/${thumb}`));
             }
             // remove the item from the content array
             setContent(content.filter(i => i !== item));
@@ -349,7 +353,7 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
                         <p>{item.type} type not supported</p>;
 
             return <div className='previewimage' key={index}> {element}
-                <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item, index)} type='button'>Delete {item.type}</button>
+                <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item)} type='button'>Delete {item.type}</button>
             </div>
         }));
     }, [content, name, IDs]);

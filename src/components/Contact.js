@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
@@ -7,6 +7,17 @@ function Contact() {
     const [last, setLast] = useState('');
     const [insta, setInsta] = useState('');
     const [email, setEmail] = useState('');
+    const [submit, setSubmit] = useState(false);
+    const form = useRef(null);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSubmit(true);
+        fetch(form.current.action, {
+            method: "POST",
+            body: new FormData(form.current),
+        }).then(response => response.json());
+    }
 
     return (<FormWrapper
         initial={{ opacity: 0 }}
@@ -14,27 +25,31 @@ function Contact() {
         exit={{ opacity: 0 }}
         transition={{ ease: "easeIn", duration: 0.23 }}
     >
-        <h3>Book with us!</h3>
-        <div className=''> <a href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a></div>
-        <Form onSubmit={e => e.preventDefault()}>
+        <a className='email' href='mailto:hello@afterdark.digital'>hello@afterdark.digital</a>
+        {!submit ? <Form ref={form}
+            action='https://sheetdb.io/api/v1/j6jv8jr1imb9g'
+            method='POST' onSubmit={handleSubmit}>
+            <h3>Book with us!</h3>
             <label>
                 <p>First Name</p>
-                <input type="text" value={first} onChange={e => setFirst(e.target.value)} required />
+                <input name='data[First Name]' type="text" value={first} onChange={e => setFirst(e.target.value)} required />
             </label>
             <label>
                 <p>Last Name</p>
-                <input type="text" value={last} onChange={e => setLast(e.target.value)} />
+                <input name='data[Last Name]' type="text" value={last} onChange={e => setLast(e.target.value)} />
             </label>
             <label>
                 <p>Instagram Handle</p>
-                <input type="text" value={insta} onChange={e => setInsta(e.target.value)} />
+                <input name='data[Instagram Handle]' type="text" value={insta} onChange={e => setInsta(e.target.value)} />
             </label>
             <label>
                 <p>Email</p>
-                <input type="text" value={email} onChange={e => setEmail(e.target.value)} required />
+                <input name='data[Email]' type="text" value={email} onChange={e => setEmail(e.target.value)} required />
             </label>
             <button className='submit' type="submit">Submit</button>
-        </Form>
+        </Form> : <div>
+            <p>Thanks, we'll get back to you soon!</p>
+        </div>}
     </FormWrapper>)
 }
 
@@ -43,10 +58,10 @@ export default Contact;
 const FormWrapper = styled(motion.div)`
     padding: 10px;
     margin: 0 auto;
-    /* height: 100%; */
     width: 60ch;
     display: flex;
     flex-direction: column;
+    row-gap: 20px;
     align-items: center;
     color: var(--offwhite) !important;
     background-color: var(--blue);
@@ -58,13 +73,24 @@ const FormWrapper = styled(motion.div)`
     & h3{
         padding: 0 0 5px 0;
     }
+    .email{
+        color: var(--blue) !important;
+        background-color: var(--offwhite);
+        text-decoration: none;
+        padding: 5px 10px;
+
+        &:hover{
+            background-color: transparent !important;
+            color: var(--offwhite) !important;
+        }
+    }
 `
 const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    align-items: flex-end;
+    align-items: center;
 
         @media screen and (min-width: 768px) {
             flex-direction: column;

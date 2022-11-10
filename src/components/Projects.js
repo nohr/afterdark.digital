@@ -33,7 +33,7 @@ function Projects({ filter, project, marginTop }) {
     }
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
-        height={project ? snap.mobile ? '100%' : `75%` : `80%`} marginTop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
+        height={project ? snap.mobile ? '100%' : `75%` : `80%`} margintop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
         <CardWrapper styling={project ? `${snap.mobile ? "height: 70vh;" : "height: 100%; padding: 0 20px;"} column-gap: 20px !important;`
             : `flex-direction: column; width: 100%; ${snap.mobile ? ' flex-direction: column;' : 'height: 100%; flex-direction: row;'}`}
         >
@@ -75,8 +75,10 @@ function Projects({ filter, project, marginTop }) {
         </CardWrapper>
         {project && <ProjectDetails height={!hide ? '35%' : 'min-content'}>
             <div className='details'>
-                <Arrow hide={hide} setHide={setHide} />
-                <h1>{project.name}</h1>
+                <div className='title'>
+                    <h1>{project.name}</h1>
+                    <Arrow hide={hide} setHide={setHide} />
+                </div>
                 {!hide && <div className='caption'>
                     <p style={{ fontVariantCaps: "all-small-caps" }}>{convertDate(project.date)}</p>
                     {project.url !== '' && <a href={project.url} target='_blank' rel='noreferrer'>{project.url.replace(/(^\w+:|^)\/\//, '')}</a>}
@@ -91,7 +93,7 @@ export default Projects;
 
 const CardScroller = styled(motion.div)`
     display: block;
-    margin-top: ${props => props.marginTop};
+    margin-top: ${props => props.margintop};
 
     @media screen and (min-width: 768px) {
         height:${props => props.height};
@@ -193,7 +195,12 @@ const ProjectDetails = styled.div`
         align-items: center;
         row-gap: 5px;
     }
-
+    .title{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        column-gap: 10px;
+    }
     .caption{
         display: flex;
         flex-direction: row;
