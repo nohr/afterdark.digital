@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useSnapshot } from "valtio";
-import styled from "styled-components";
 import { collection, getDocs, orderBy, query } from "firebase/firestore/lite";
 import Header from "./components/Header";
 import Projects from "./components/Projects";
@@ -51,7 +50,7 @@ function App() {
     })();
 
     return () => state.data = [];
-  }, [db])
+  }, [])
 
   return <div className="App">
     <Header header={header} user={user} />
@@ -71,17 +70,3 @@ function App() {
 }
 
 export default App;
-
-const ContentWrapper = styled.div`
-    height: 70%;
-    width: ${props => props.width};
-    display: flex;
-    flex-direction: column;
-    /* position: absolute; */
-    /* display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 1fr 1fr; */
-    /* position: fixed; */
-    /* overflow-x: hidden; */
-    /* margin: 0 20px; */
-`

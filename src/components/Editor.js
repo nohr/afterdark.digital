@@ -8,7 +8,7 @@ import { useSnapshot } from 'valtio';
 import { state } from '../utils/state';
 // import InstagramEmbed from 'react-instagram-embed';
 
-function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPath, cover, setCover }) {
+function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover, setCover }) {
     const snap = useSnapshot(state);
     const nameInput = useRef(null);
     const dataList = useRef(null);
@@ -78,7 +78,6 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
         setDate('');
         setURL('');
         setContent([]);
-        setPath('');
         setSelectedFiles('');
         setIsFilePicked(false);
         setTikTokID('');
@@ -191,7 +190,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
     };
 
     function handleUploadPost() {
-        if (name !== '', category !== '', date !== '') {
+        if (name !== '' && category !== '' && date !== '') {
             uploadData();
             setContent([]);
             setSaved(true);
@@ -244,7 +243,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
             </div >
             <div className='section third'>
                 Images
-                {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
+                {snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setCover={setCover} />}
                 <input onChange={e => {
                     e.target.files.length > 0 ? setIsFilePicked(true) : setIsFilePicked(false);
                     setSelectedFiles(e.target.files);
@@ -265,7 +264,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, setPat
     }</div>
 }
 
-function Preview({ content, setContent, name, IDs, setPath, setCover }) {
+function Preview({ content, setContent, name, IDs, setCover }) {
     const [preview, setPreview] = useState(`Upload and click 'Add Image' to preview.`);
     // set the cover image when the content changes
     useEffect(() => {
@@ -304,7 +303,7 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
                 });
             });
         }
-    }, [content]);
+    }, [content, name, setCover]);
 
     // Set the preview content when the document matches from the database
     useEffect(() => {
@@ -313,7 +312,6 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
             // get the data from the database
             getDoc(doc(db, "projects", name)).then((doc) => {
                 if (doc.exists()) {
-                    setPath(doc.data().path);
                     setContent(doc.data().content);
                 } else {
                     console.log("No such document!");
@@ -356,7 +354,7 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
                 <button className={`delete`} style={{ width: "min-content" }} onClick={() => handleDeleteContent(item)} type='button'>Delete {item.type}</button>
             </div>
         }));
-    }, [content, name, IDs]);
+    }, [content, name, IDs, setContent]);
 
     // when there is no content, show the default preview
     useEffect(() => {
@@ -371,7 +369,6 @@ function Preview({ content, setContent, name, IDs, setPath, setCover }) {
 
 export function Editor({ user, marginTop }) {
     const snap = useSnapshot(state);
-    const [path, setPath] = useState('');
     const [IDs, setIDs] = useState([]);
     const [name, setName] = useState('');
     const [cover, setCover] = useState('');
@@ -393,11 +390,9 @@ export function Editor({ user, marginTop }) {
                     cover={cover}
                     setCover={setCover}
                     setContent={setContent}
-                    setPath={setPath}
                 />
-                {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setPath={setPath} setCover={setCover} />}
+                {!snap.mobile && <Preview name={name} IDs={IDs} content={content} setContent={setContent} setCover={setCover} />}
             </div>
-            {/* {path !== '' && <Navigate to={`/editor/${path}`} />} */}
         </ContentPage>
     } else {
         return <ContentPage style={{ marginTop: marginTop }}>
