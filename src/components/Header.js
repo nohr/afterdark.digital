@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffecthea, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components'
 import { useSnapshot } from 'valtio';
@@ -8,16 +8,13 @@ import Contact from './Contact';
 import { HamburgerIcon, Logo } from '../utils/svg';
 
 function Header({ header, user }) {
-    const navWrap = useRef(null);
     const snap = useSnapshot(state);
     let location = useLocation();
     const [filter, setFilter] = useState(true);
 
     useEffect(() => {
-        if (navWrap.current) navWrap.current.addEventListener("touchmove", (e) => e.preventDefault(), { passive: true })
+        if (header.current) header.current.addEventListener("touchmove", (e) => e.preventDefault(), { passive: true })
     });
-
-    useEffect(() => { return () => state.menu = false }, [location]);
 
     useEffect(() => {
         if (location.pathname === "/" || location.pathname.includes("projects")) setFilter(true)
@@ -26,8 +23,8 @@ function Header({ header, user }) {
         if (snap.menu) setFilter(false);
     }, [location.pathname, snap.menu]);
 
-    return (<> <MetaNavWrapper ref={header}>
-        <NavWrapper ref={navWrap}>
+    return (<> <MetaNavWrapper>
+        <NavWrapper ref={header}>
             {!snap.mobile && <div className='Links'>
                 <a onClick={() => state.menu = !snap.menu} className={snap.menu ? `active` : null}> Contact</a>
                 {user && <NavLink to={'/editor'}>Editor</NavLink>}

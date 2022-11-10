@@ -21,6 +21,8 @@ function App() {
   useEffect(() => {
     setPadding({ header: header.current.clientHeight });
   }, [location, header]);
+  useEffect(() => { return () => state.menu = false }, [location]);
+
 
   document.addEventListener('gesturestart', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
   document.addEventListener('gesturechange', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
