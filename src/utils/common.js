@@ -42,6 +42,14 @@ export function generateElement(item, index) {
                 <p>{item.type} type not supported</p>;
 }
 
+// export a function that changes the the string extension to a webp extension
+export function convertToWebp(url) {
+    let newUrl = url.split('.');
+    newUrl[newUrl.length - 2] += '_1080x1080';
+    newUrl[newUrl.length - 1] = 'webp';
+    return newUrl.join('.');
+}
+
     // a function that resizes the div on drag
     // function resizeDiv(e) {
     //     let div = document.getElementById('resize');
