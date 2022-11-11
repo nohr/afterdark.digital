@@ -50,6 +50,22 @@ export function convertToWebp(url) {
     return newUrl.join('.');
 }
 
+
+//convert mm/dd/yyyy to yyyy-mm-dd
+export function formatDate(date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
     // a function that resizes the div on drag
     // function resizeDiv(e) {
     //     let div = document.getElementById('resize');

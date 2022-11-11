@@ -5,7 +5,7 @@ import { useSnapshot } from 'valtio';
 import { db, signInWithGoogle } from '../utils/firebase/api';
 import { state } from '../utils/state';
 import { handleAddContent, handleDeleteContent, handleDeletePost } from '../utils/firebase/firebase.service';
-import { clearSelectedName, generateElement, handleUploadPost } from '../utils/common';
+import { clearSelectedName, formatDate, generateElement, handleUploadPost } from '../utils/common';
 // import InstagramEmbed from 'react-instagram-embed';
 
 function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover, setCover }) {
@@ -40,20 +40,6 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
 
     // Populate form with data from firestore when name matches
     useEffect(() => {
-        //convert mm/dd/yyyy to yyyy-mm-dd
-        function formatDate(date) {
-            let d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-            if (month.length < 2)
-                month = '0' + month;
-            if (day.length < 2)
-                day = '0' + day;
-
-            return [year, month, day].join('-');
-        }
         if (IDs.indexOf(name) !== -1) {
             (async () => {
                 const docSnap = await getDoc(doc(db, "projects", name));

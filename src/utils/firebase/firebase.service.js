@@ -1,8 +1,8 @@
+/* eslint-disable no-loop-func */
 import { deleteDoc, doc, setDoc, Timestamp } from 'firebase/firestore/lite';
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 } from 'uuid';
 import { db, storage } from './api';
-import { resizeImage } from '../resize';
 import { convertToWebp } from '../common';
 
 export async function handleAddContent(selectedFiles, name, setLoad, content, setContent, setIsFilePicked, fileInput, TikTokID, setTikTokID) {
@@ -15,10 +15,6 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
             alert("File size is too large. Please upload a file less than 10MB.");
             return;
         }
-        // resize file if it is an image
-        // if (file.type.includes("image")) {
-        //     file = await resizeImage(file);
-        // }
         // keep track of file upload progress
         let progress = 0;
         // create a unique id for the file
