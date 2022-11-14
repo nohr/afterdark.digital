@@ -3,7 +3,7 @@ import { deleteDoc, doc, setDoc, Timestamp } from 'firebase/firestore/lite';
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 } from 'uuid';
 import { db, storage } from './api';
-import { convertToWebp } from '../common';
+// import { convertToWebp } from '../common';
 
 export async function handleAddContent(selectedFiles, name, setLoad, content, setContent, setIsFilePicked, fileInput, TikTokID, setTikTokID) {
     let uploadTask = null;
@@ -31,16 +31,19 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
             // catch errors
             console.log(error);
         }, () => {
-            // get the download url of the resized img when complete
-            if (file.type.includes("image")) {
-                getDownloadURL(ref(storage, `projects/${name} Media/${id}-${convertToWebp(file.name)}`)).then(downloadURL => {
-                    handleGetContent(name, setContent, newContent, content, id, convertToWebp(file.name), "image", downloadURL, setLoad, progress);
-                });
-            } else {
-                getDownloadURL(ref(storage, `projects/${name} Media/${id}-${file.name}`)).then(downloadURL => {
-                    handleGetContent(name, setContent, newContent, content, id, file.name, file.type, downloadURL, setLoad, progress);
-                });
-            }
+            // // get the download url of the resized img when complete
+            // if (file.type.includes("image")) {
+            //     getDownloadURL(ref(storage, `projects/${name} Media/${id}-${convertToWebp(file.name)}`)).then(downloadURL => {
+            //         handleGetContent(name, setContent, newContent, content, id, convertToWebp(file.name), "image", downloadURL, setLoad, progress);
+            //     });
+            // } else {
+            //     getDownloadURL(ref(storage, `projects/${name} Media/${id}-${file.name}`)).then(downloadURL => {
+            //         handleGetContent(name, setContent, newContent, content, id, file.name, file.type, downloadURL, setLoad, progress);
+            //     });
+            // }
+            getDownloadURL(ref(storage, `projects/${name} Media/${id}-${file.name}`)).then(downloadURL => {
+                handleGetContent(name, setContent, newContent, content, id, file.name, file.type, downloadURL, setLoad, progress);
+            });
         });
     };
 
@@ -82,12 +85,13 @@ function handleGetContent(name, setContent, newContent, content, id, filename, f
 
 
 export function handleDeleteContent(item, name, content, setContent) {
-    // remove the file from storage if its a image or video
-    if (item.type === 'image') {
-        deleteObject(ref(storage, `projects/${name} Media/${convertToWebp(item.name)}`));
-    } else if (item.type === 'video') {
-        deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
-    }
+    // // remove the file from storage if its a image or video
+    // if (item.type === 'image') {
+    //     deleteObject(ref(storage, `projects/${name} Media/${convertToWebp(item.name)}`));
+    // } else if (item.type === 'video') {
+    //     deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
+    // }
+    deleteObject(ref(storage, `projects/${name} Media/${item.name}`));
     // remove the item from the content array
     setContent(content.filter(i => i !== item));
     // update the firestore doc
