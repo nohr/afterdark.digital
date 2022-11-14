@@ -23,7 +23,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [TikTokID, setTikTokID] = useState('');
     // const [InstaID, setInstaID] = useState('');
-    const [load, setLoad] = useState('');
+    const [load, setLoad] = useState('10MB Max');
     const [confirm, setConfirm] = useState(false);
 
     // Hide mobile keyboard on selection
@@ -85,7 +85,8 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
                 <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
                 <div className='addContentWrap'>
                     <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={() => handleAddContent(selectedFiles, name, setLoad, content, setContent, setIsFilePicked, fileInput, TikTokID, setTikTokID)}>Add Content</button>
-                    {load !== '' && <p>{load} uploaded</p>}
+                    <p>{load === '10MB Max' ? `${load}`
+                    : `${load} uploaded`}</p>
                 </div></div>
             <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}
                 onClick={() => handleUploadPost(name, category, description, date, url, content, cover, setSaved, setContent)} disabled={(TikTokID !== '') && (isFilePicked)} type='submit'>

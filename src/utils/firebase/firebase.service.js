@@ -11,7 +11,7 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
     // handle uploading multiple files with an ordered id
     for (let file of selectedFiles) {
         // check file size
-        if (file.size > 10000000) {
+        if (file.size > 10485760) {
             alert("File size is too large. Please upload a file less than 10MB.");
             return;
         }
@@ -44,6 +44,8 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
             getDownloadURL(ref(storage, `projects/${name} Media/${id}-${file.name}`)).then(downloadURL => {
                 handleGetContent(name, setContent, newContent, content, id, file.name, file.type, downloadURL, setLoad, progress);
             });
+            setLoad("10MB Max");
+            progress = 0;
         });
     };
 
@@ -71,16 +73,13 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
 };
 
 // wait for the firebase extension to finish and grab the download url
-function handleGetContent(name, setContent, newContent, content, id, filename, filetype, downloadURL, setLoad, progress) {
+function handleGetContent(name, setContent, newContent, content, id, filename, filetype, downloadURL) {
     // add the file to the array of files with an ordered id
     newContent.push({ id, name: `${id}-${filename}`, url: downloadURL, type: filetype.split('/')[0] });
     // add the new content to the content array
     setContent([...content, ...newContent]);
     // update the firestore document
     setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
-    // reset the progress
-    setLoad('');
-    progress = 0;
 };
 
 
