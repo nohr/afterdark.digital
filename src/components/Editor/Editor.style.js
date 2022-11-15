@@ -25,6 +25,26 @@ export const ContentPage = styled.div`
       padding: 10px;
     }
   }
+  .about-form {
+    width: 65ch;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+
+    textarea {
+      height: 65vh;
+    }
+
+    @media screen and (max-width: 768px) {
+      width: 100%;
+      height: 100%;
+
+      textarea {
+        height: 100%;
+      }
+    }
+  }
+
   .formWrap {
     @media screen and (max-width: 768px) {
       width: 100%;

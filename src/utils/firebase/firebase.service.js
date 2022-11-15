@@ -83,7 +83,6 @@ function handleGetContent(name, setContent, newContent, content, id, filename, f
     setDoc(doc(db, "projects", name), { content: [...content, ...newContent] }, { merge: true });
 };
 
-
 export function handleDeleteContent(item, name, content, setContent) {
     // // remove the file from storage if its a image or video
     // if (item.type === 'image') {
@@ -137,6 +136,12 @@ export async function handleGetAbout() {
         console.log("No such document!");
     }
 }   
+
+export async function uploadAbout() {
+    await setDoc(doc(db, "info", "About"), {
+        text: state.about
+    }, { merge: true });
+};
 
 export async function handleGetData() {
       const data = await getDocs(
