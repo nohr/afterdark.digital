@@ -149,7 +149,7 @@ function Preview({ content, setContent, name, IDs, setCover }) {
     return <div className='slideshow'>{preview}</div>
 }
 
-export function Editor({ user, marginTop }) {
+export default function Editor({ user, marginTop }) {
     const snap = useSnapshot(state);
     const [IDs, setIDs] = useState([]);
     const [name, setName] = useState('');

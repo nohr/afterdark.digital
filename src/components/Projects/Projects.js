@@ -5,8 +5,12 @@ import { useSnapshot } from 'valtio'
 import { state } from '../../utils/state'
 import { handleMousemove } from '../../utils/scroll'
 import Details from './Details'
-const Card = React.lazy(() => import('./Card'));
-const Item = React.lazy(() => import('./Item'));
+const Card = React.lazy(() =>
+  import(/* webpackChunkName: "Card" */ "./Card")
+);
+const Item = React.lazy(() =>
+  import(/* webpackChunkName: "Item" */ "./Item")
+);
 
 
 function Projects({ filter, project, marginTop }) {
@@ -69,12 +73,12 @@ function Projects({ filter, project, marginTop }) {
                 // project is selected, show the content
                 project.content.map((item, key) =>
                     <Suspense key={key} fallback={<div style={loaderStyle}>Loading...</div>}>
-                        <Item key={key} item={item} />
+                        <Item item={item} />
                     </Suspense>)
                 : // none selected, show project cards
                 projects.map((project, key) => <Suspense key={key} 
                     fallback={<div style={loaderStyle}>Loading...</div>}>
-                    <Card project={project} key={key} />
+                    <Card project={project} />
                 </Suspense>)}
         </CardWrapper>
         {project && <Details project={project} />}

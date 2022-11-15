@@ -1,7 +1,8 @@
 /* eslint-disable no-loop-func */
-import { deleteDoc, doc, setDoc, Timestamp } from 'firebase/firestore/lite';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, Timestamp } from 'firebase/firestore/lite';
 import { deleteObject, getDownloadURL, listAll, ref, uploadBytesResumable } from 'firebase/storage';
 import { v4 } from 'uuid';
+import { state } from '../state';
 import { db, storage } from './api';
 // import { convertToWebp } from '../common';
 
@@ -126,3 +127,30 @@ export async function uploadData(name, category, description, date, url, content
         content: content
     }, { merge: true });
 };
+
+export async function handleGetAbout() {
+    const docRef = doc(db, "info", "About");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        state.about = docSnap.data().text;
+    } else {
+        console.log("No such document!");
+    }
+}   
+
+export async function handleGetData() {
+      const data = await getDocs(
+        query(collection(db, "projects"),
+      // where("published", "==", true),
+      orderBy("date", "desc")));
+      state.data = data.docs.map(doc => doc.data());
+}
+
+export async function handleGetCategories() {
+      const data = await getDocs(
+        query(collection(db, "projects"),
+      // where("published", "==", true),
+      orderBy("date", "desc")));
+      state.categories = [...new Set(data.docs.map(doc => doc.data().category))];
+      state.categories.sort();
+}
