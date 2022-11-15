@@ -5,6 +5,7 @@ import { useSnapshot } from 'valtio'
 import { state } from '../../utils/state'
 import { handleMousemove } from '../../utils/scroll'
 import Details from './Details'
+import Loader from '../Loader'
 const Card = React.lazy(() =>
   import(/* webpackChunkName: "Card" */ "./Card")
 );
@@ -44,25 +45,6 @@ function Projects({ filter, project, marginTop }) {
         })
     }, [])
 
-    const loaderStyle = {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "var(--bgPrimary)",
-        color: "var(--textPrimary)",
-        fontSize: "1.5rem",
-        fontWeight: "bold",
-        letterSpacing: "0.1rem",
-        textTransform: "uppercase",
-        textAlign: "center",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        zIndex: 1000
-    }
-
     return (<CardScroller ref={CardsScroll} className='CardsScroll' initial={{ opacity: 0 }}
         animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ ease: "easeIn", duration: 0.23 }}
         height={project ? snap.mobile ? '100%' : `75%` : `80%`} margintop={project ? `${marginTop}px` : `calc(${marginTop}px + 51px)`}>
@@ -72,12 +54,12 @@ function Projects({ filter, project, marginTop }) {
             {project ?
                 // project is selected, show the content
                 project.content.map((item, key) =>
-                    <Suspense key={key} fallback={<div style={loaderStyle}>Loading...</div>}>
+                    <Suspense key={key} fallback={<Loader/>}>
                         <Item item={item} />
                     </Suspense>)
                 : // none selected, show project cards
                 projects.map((project, key) => <Suspense key={key} 
-                    fallback={<div style={loaderStyle}>Loading...</div>}>
+                    fallback={<Loader/>}>
                     <Card project={project} />
                 </Suspense>)}
         </CardWrapper>

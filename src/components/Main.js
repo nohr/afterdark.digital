@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import Loader from "./Loader";
 const About = React.lazy(() =>
   import(/* webpackChunkName: "About" */ "./About")
 );
@@ -20,7 +21,7 @@ export default function Main({
   about,
 }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader/>}>
       {setUser ? (
         <Editor user={user} setUser={setUser} marginTop={marginTop} />
       ) : null}

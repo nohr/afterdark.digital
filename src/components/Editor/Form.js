@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore/lite";
-import styled from "styled-components";
 import { useSnapshot } from "valtio";
 import { db} from "../../utils/firebase/api";
 import { state } from "../../utils/state";
