@@ -4,11 +4,10 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useSnapshot } from "valtio";
 import { collection, getDocs, orderBy, query } from "firebase/firestore/lite";
 import Header from "./components/Header";
-import Projects from "./components/Projects";
 import { state } from "./utils/state";
-import { Editor } from "./components/Editor";
 // import { Shop } from "./components/Shop";
 import { db } from "./utils/firebase/api";
+import Main from "./components/Main";
 
 function App() {
   const snap = useSnapshot(state);
@@ -57,16 +56,16 @@ function App() {
   return <div className="App">
     <Header header={header} user={user} />
     <Routes>
-      <Route path="/" element={<Projects marginTop={padding.header} />} />
-      <Route path="/projects" element={<Projects marginTop={padding.header} />} />
-      <Route path="/editor" element={<Editor user={user} setUser={setUser} marginTop={padding.header} />} />
+      <Route path="/" element={<Main marginTop={padding.header} />} />
+      <Route path="/projects" element={<Main marginTop={padding.header} />} />
+      <Route path="/editor" element={<Main setUser={setUser} user={user} marginTop={padding.header} />} />
       {/* <Route path="/shop" element={<Shop marginTop={padding.header} />} /> */}
       {snap.data.map((value, index) =>
         <Route key={index} path={`/${value.path}`}
-          element={<Projects project={value} marginTop={padding.header} />} />)}
+          element={<Main project={value} marginTop={padding.header} />} />)}
       {snap.categories.map((category, index) =>
         <Route key={index} path={`/projects/${category.toLowerCase()}`}
-          element={<Projects filter={category} marginTop={padding.header} />} />)}
+          element={<Main filter={category} marginTop={padding.header} />} />)}
     </Routes>
   </div>;
 }

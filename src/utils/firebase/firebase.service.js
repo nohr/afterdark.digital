@@ -11,8 +11,8 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
     // handle uploading multiple files with an ordered id
     for (let file of selectedFiles) {
         // check file size
-        if (file.size > 10485760) {
-            alert("File size is too large. Please upload a file less than 10MB.");
+        if (file.size > 5242880) {  
+            alert("File size is too large. Please upload a file less than 5MB.");
             return;
         }
         // keep track of file upload progress
@@ -44,7 +44,7 @@ export async function handleAddContent(selectedFiles, name, setLoad, content, se
             getDownloadURL(ref(storage, `projects/${name} Media/${id}-${file.name}`)).then(downloadURL => {
                 handleGetContent(name, setContent, newContent, content, id, file.name, file.type, downloadURL, setLoad, progress);
             });
-            setLoad("10MB Max");
+            setLoad("5MB Max");
             progress = 0;
         });
     };

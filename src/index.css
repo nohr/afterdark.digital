@@ -94,10 +94,15 @@ button {
 
 .App {
   display: flex;
-  /* justify-content: center; */
   flex-direction: column;
   height: 100%;
   width: fit-content;
+}
+
+@media screen and (min-width: 768px) {
+  .App {
+  justify-content: center;
+  }
 }
 
 a {

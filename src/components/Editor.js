@@ -23,7 +23,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [TikTokID, setTikTokID] = useState('');
     // const [InstaID, setInstaID] = useState('');
-    const [load, setLoad] = useState('10MB Max');
+    const [load, setLoad] = useState('5MB Max');
     const [confirm, setConfirm] = useState(false);
 
     // Hide mobile keyboard on selection
@@ -85,7 +85,7 @@ function Form({ name, setName, IDs, setIDs, Preview, content, setContent, cover,
                 <input value={TikTokID} onChange={e => setTikTokID(e.target.value)} type="text" placeholder='TikTok ID (ie. 7160455716745137413)' ></input>
                 <div className='addContentWrap'>
                     <button className={`addContent ${(!isFilePicked) ? "disabled" : ""} ${(TikTokID !== "") ? "disabled" : ""}`} type='button' onClick={() => handleAddContent(selectedFiles, name, setLoad, content, setContent, setIsFilePicked, fileInput, TikTokID, setTikTokID)}>Add Content</button>
-                    <p>{load === '10MB Max' ? `${load}`
+                    <p>{load === '5MB Max' ? `${load}`
                     : `${load} uploaded`}</p>
                 </div></div>
             <button className={`submit ${(TikTokID !== "") || (isFilePicked) ? "disabled" : ""}`}

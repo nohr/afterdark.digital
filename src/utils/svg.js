@@ -28,10 +28,9 @@ export function HamburgerIcon() {
         </NavIcon>
     );
 }
-export function Arrow({ hide, setHide }) {
+export function Arrow({ hide }) {
     return <Caret
         transform={!hide ? "" : "rotate(180deg)"}
-        onClick={() => setHide(!hide)}
         background={hide ? "transparent" : "var(--contrast)"}>
         <svg
             focusable="false"
@@ -49,7 +48,6 @@ const Caret = styled.div`
     align-self: center;
     height: 25px;
     width: auto;
-    /* fill: var(--contrast); */
     z-index: 4000;
     cursor: pointer;
     transition: 0.3s;
@@ -57,12 +55,6 @@ const Caret = styled.div`
 
         @media screen and (max-width: 768px) {
             height: 40px;
-        }
-
-         @media screen and (min-width: 768px) {
-                &:hover {
-                    fill: var(--blue);
-                }
         }
     }
 
