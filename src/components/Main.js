@@ -3,14 +3,12 @@ const About = React.lazy(() =>
   import(/* webpackChunkName: "About" */ "./About")
 );
 const Editor = React.lazy(() =>
-  import(/* webpackChunkName: "Editor" */ "./Editor")
+  import(/* webpackChunkName: "Editor" */ "./Editor/Editor")
 );
 const Projects = React.lazy(() =>
   import(/* webpackChunkName: "Projects" */ "./Projects/Projects")
 );
-const Home = React.lazy(() =>
-  import(/* webpackChunkName: "Home" */ "./Home")
-);
+const Home = React.lazy(() => import(/* webpackChunkName: "Home" */ "./Home"));
 // import { Shop } from "./components/Shop";
 
 export default function Main({
@@ -19,7 +17,7 @@ export default function Main({
   setUser,
   project,
   filter,
-    about
+  about,
 }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>

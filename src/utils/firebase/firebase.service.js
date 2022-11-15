@@ -154,3 +154,17 @@ export async function handleGetCategories() {
       state.categories = [...new Set(data.docs.map(doc => doc.data().category))];
       state.categories.sort();
 }
+
+export async function handleGetProjectData(name, setContent) {
+  getDoc(doc(db, "projects", name))
+    .then((doc) => {
+      if (doc.exists()) {
+        setContent(doc.data().content);
+      } else {
+        console.log("No such document!");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+    });
+}

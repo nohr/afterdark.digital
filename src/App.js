@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useSnapshot } from "valtio";
-import Header from "./components/Header";
+import Header from "./components/Header/Header";
 import { state } from "./utils/state";
 import Main from "./components/Main";
-import { handleGetCategories, handleGetData } from "./utils/firebase/firebase.service";
+import {
+  handleGetCategories,
+  handleGetData,
+} from "./utils/firebase/firebase.service";
 
 function App() {
   const snap = useSnapshot(state);
@@ -18,25 +21,38 @@ function App() {
   useEffect(() => {
     setPadding({ header: header.current.clientHeight });
   }, [location, header]);
-  useEffect(() => { return () => state.menu = false }, [location]);
-  useEffect(() => { handleGetData(); handleGetCategories();}, []);
+  useEffect(() => {
+    return () => (state.menu = false);
+  }, [location]);
+  useEffect(() => {
+    handleGetData();
+    handleGetCategories();
+  }, []);
 
   // disable mobile zoom
-  document.addEventListener('gesturestart', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
-  document.addEventListener('gesturechange', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
-  document.addEventListener('gestureend', (e) => { e.preventDefault(); document.body.style.zoom = 0.99; });
+  document.addEventListener("gesturestart", (e) => {
+    e.preventDefault();
+    document.body.style.zoom = 0.99;
+  });
+  document.addEventListener("gesturechange", (e) => {
+    e.preventDefault();
+    document.body.style.zoom = 0.99;
+  });
+  document.addEventListener("gestureend", (e) => {
+    e.preventDefault();
+    document.body.style.zoom = 0.99;
+  });
 
   // check if the user is logged in
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
       } else {
         setUser(false);
       }
-    })
+    });
   }, [auth, setUser]);
-
 
   return (
     <div className="App">
